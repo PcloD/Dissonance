@@ -116,6 +116,10 @@ public class WorldManager : MonoBehaviour {
 		return true;
 	}
 
+	public TileContents ContentsAt(IntVector v) {
+		return ContentsAt(v.x, v.y, v.z);
+	}
+
 	public TileContents ContentsAt(int x, int y, int z) {
 		if (_world.ContainsKey(y)) {
 			if (_world[y].ContainsKey(x)) {
@@ -125,6 +129,10 @@ public class WorldManager : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+
+	public void SetContentsAt(IntVector v, WorldEntity t) {
+		SetContentsAt(v.x, v.y, v.z, t);
 	}
 
 	public void SetContentsAt(int x, int y, int z, WorldEntity t) {

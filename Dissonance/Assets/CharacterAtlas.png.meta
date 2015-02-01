@@ -52,8 +52,8 @@ TextureImporter:
         y: 112
         width: 200
         height: 400
-      alignment: 7
-      pivot: {x: .5, y: 0}
+      alignment: 9
+      pivot: {x: .5, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ZYChar
       rect:
@@ -62,8 +62,8 @@ TextureImporter:
         y: 112
         width: 200
         height: 400
-      alignment: 7
-      pivot: {x: .5, y: 0}
+      alignment: 9
+      pivot: {x: .5, y: .25}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
