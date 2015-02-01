@@ -89,7 +89,7 @@ public class WorldEntity : MonoBehaviour {
 			if (c != null && c.entity != null && c.entity != this) return false;
 		}
 
-		// TODO(Julian): Test if swept rotation would intersect!
+		// TODO(Zi): Test if swept rotation would intersect!
 		// XXX: Without this test, objects can teleport through other objects via rotation
 
 		// Clear old location
