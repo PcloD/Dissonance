@@ -11,46 +11,58 @@ public class WorldEntity : MonoBehaviour {
 	}
 
 	IntVector _loc = new IntVector(5,5,5);
+	public IntVector Location {
+		get { return _loc; }
+	}
 
 	Quaternion _rotation = Quaternion.identity;
+	public Quaternion Rotation {
+		get { return _rotation; }
+	}
+
 	[SerializeField]
 	List<IntVector> _identityLocations = new List<IntVector>();
 
+	void Start () {
+		WorldManager.g.RegisterEntity(this);
+	}
+
 	private bool RotateAroundAxis(IntVector worldAnchor, int dir, int axis) {
-		Vector3 axisVector = Vector3.zero;
-		axisVector[axis] = dir*90;
-		Quaternion additionalRotation = Quaternion.Euler(axisVector);
-		IntVector offset = (worldAnchor - _loc);
-		IntVector rotatedOffset = new IntVector(additionalRotation * offset.ToVector3());
-		IntVector newLoc = offset - rotatedOffset + _loc;
-		Quaternion newRotation = additionalRotation * _rotation;
+		// Vector3 axisVector = Vector3.zero;
+		// axisVector[axis] = dir*90;
+		// Quaternion additionalRotation = Quaternion.Euler(axisVector);
+		// IntVector offset = (worldAnchor - _loc);
+		// IntVector rotatedOffset = new IntVector(additionalRotation * offset.ToVector3());
+		// IntVector newLoc = offset - rotatedOffset + _loc;
+		// Quaternion newRotation = additionalRotation * _rotation;
 
-		// Test new location
-		List<IntVector> newLocs = AbsoluteLocations(newLoc, newRotation);
-		for (int i = 0; i < newLocs.Count; i++) {
-			TileContents c = WorldManager.g.ContentsAt(newLocs[i].x, newLocs[i].y, newLocs[i].z);
-			if (c != null && c.entity != null && c.entity != this) return false;
-		}
+		// // Test new location
+		// List<IntVector> newLocs = AbsoluteLocations(newLoc, newRotation);
+		// for (int i = 0; i < newLocs.Count; i++) {
+		// 	TileContents c = WorldManager.g.ContentsAt(newLocs[i].x, newLocs[i].y, newLocs[i].z);
+		// 	if (c != null && c.entity != null && c.entity != this) return false;
+		// }
 
-		// TODO(Zi): Test if swept rotation would intersect!
-		// XXX: Without this test, objects can teleport through other objects via rotation
+		// // TODO(Zi): Test if swept rotation would intersect!
+		// // XXX: Without this test, objects can teleport through other objects via rotation
 
-		// Clear old location
-		List<IntVector> oldLocs = AbsoluteLocations(_loc, _rotation);
-		for (int i = 0; i < oldLocs.Count; i++) {
-			WorldManager.g.SetContentsAt(oldLocs[i].x, oldLocs[i].y, oldLocs[i].z, null);
-		}
+		// // Clear old location
+		// List<IntVector> oldLocs = AbsoluteLocations(_loc, _rotation);
+		// for (int i = 0; i < oldLocs.Count; i++) {
+		// 	WorldManager.g.SetContentsAt(oldLocs[i].x, oldLocs[i].y, oldLocs[i].z, null);
+		// }
 
-		// Fill new location
-		for (int i = 0; i < newLocs.Count; i++) {
-			WorldManager.g.SetContentsAt(newLocs[i].x, newLocs[i].y, newLocs[i].z, this);
-		}
+		// // Fill new location
+		// for (int i = 0; i < newLocs.Count; i++) {
+		// 	WorldManager.g.SetContentsAt(newLocs[i].x, newLocs[i].y, newLocs[i].z, this);
+		// }
 
-		_loc = newLoc;
-		_rotation = newRotation;
+		// _loc = newLoc;
+		// _rotation = newRotation;
 
-		WorldManager.g.UpdatePassability();
-		return true;
+		// WorldManager.g.UpdatePassability();
+		// return true;
+		return false;
 	}
 
 	public bool RotateAroundX(IntVector worldAnchor, int dir) {
@@ -65,7 +77,7 @@ public class WorldEntity : MonoBehaviour {
 		return RotateAroundAxis(worldAnchor, dir, 2);
 	}
 
-	List<IntVector> AbsoluteLocations (IntVector location, Quaternion rotation) {
+	public List<IntVector> AbsoluteLocations (IntVector location, Quaternion rotation) {
 		List<IntVector> absoluteLocations = new List<IntVector>();
 		for (int i = 0; i < _identityLocations.Count; i++) {
 			absoluteLocations.Add(new IntVector(rotation * _identityLocations[i].ToVector3()) + location);
@@ -75,14 +87,6 @@ public class WorldEntity : MonoBehaviour {
 
 	IntVector AbsoluteFromLocalOffset(IntVector loc, IntVector offset, Quaternion rot) {
 		return new IntVector(rot * offset.ToVector3()) + loc;
-	}
-
-	void Start () {
-		List<IntVector> all = AbsoluteLocations(_loc, _rotation);
-		for (int i = 0; i < all.Count; i++) {
-			WorldManager.g.SetContentsAt(all[i].x, all[i].y, all[i].z, this);
-		}
-		WorldManager.g.UpdatePassability();
 	}
 
 	// Update is called once per frame

@@ -132,7 +132,7 @@ public struct IntVector2D {
 	  return new IntVector2D (a.x-b.x, a.y-b.y);
 	}
 
-	public Vector3 ToVector2 () {
+	public Vector2 ToVector2 () {
 		return new Vector2(x,y);
 	}
 
