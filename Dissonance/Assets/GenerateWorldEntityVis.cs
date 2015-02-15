@@ -169,7 +169,7 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 		mesh.Optimize();
 		_meshFilter.mesh = mesh;
 
-		_meshRenderer.sharedMaterial = new Material(Shader.Find("Diffuse"));
+		_meshRenderer.sharedMaterial = new Material(Shader.Find("Custom/VisualizationShader"));
 	}
 
 	void RotationPrep () {
