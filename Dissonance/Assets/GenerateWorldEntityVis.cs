@@ -166,7 +166,7 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 		mesh.triangles = allTris;
 
 		mesh.RecalculateBounds();
-		// mesh.Optimize();
+		mesh.Optimize();
 		_meshFilter.mesh = mesh;
 
 		_meshRenderer.sharedMaterial = new Material(Shader.Find("Diffuse"));
@@ -180,6 +180,10 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 	void Update () {
 		if (_rotatable != null) {
 			_transform.rotation = Quaternion.Slerp(_rotatable.StateInfo.lastRotation, _worldEntity.Rotation, _rotatable.StateInfo.fractionComplete);
+		} else {
+			_transform.position = (_worldEntity.Location.ToVector3() + Vector3.one/2f) * WorldManager.g.TileSize;
+			_meshTransform.position = (_worldEntity.Location.ToVector3() + Vector3.one/2f) * WorldManager.g.TileSize;
+			_meshTransform.rotation = _worldEntity.Rotation;
 		}
 	}
 }
