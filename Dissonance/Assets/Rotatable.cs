@@ -2,30 +2,37 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
+public struct RotationStateInformation {
+	public RotationState lastState;
+	public RotationState state;
+
+	public float fractionComplete; // Range from 0-1, inclusive
+	public Vector3 rotationAnchor;
+	public Quaternion lastRotation;
+	public IntVector lastLocation;
+}
+
+public enum RotationState {
+	Idle,
+	StartRotatingCounterClockwise,
+	RotatingCounterClockwise,
+	StartRotatingClockwise,
+	RotatingClockwise
+}
+
 public class Rotatable : MonoBehaviour {
 
 	private WorldEntity _worldEntity;
 
-	private enum RotationState {
-		Idle,
-		StartRotatingCounterClockwise,
-		RotatingCounterClockwise,
-		StartRotatingClockwise,
-		RotatingClockwise
-	}
-
-	[System.Serializable]
-	private struct RotationStateInformation {
-		public RotationState lastState;
-		public RotationState state;
-
-		public float fractionComplete; // Range from 0-1, inclusive
-		public Vector3 rotationAnchor;
-		public Quaternion lastRotation;
-	}
-
 	[SerializeField]
 	RotationStateInformation _currStateInfo;
+	public RotationStateInformation StateInfo {
+		get { return _currStateInfo; }
+	}
+
+	public delegate void RotationBeganDelegates();
+    public RotationBeganDelegates RotationHook;
 
 	void Awake () {
 		_worldEntity = GetComponent<WorldEntity>();
@@ -39,12 +46,25 @@ public class Rotatable : MonoBehaviour {
 		_worldEntity.Simulators += Simulate;
 	}
 
+	void Start () {
+		_currStateInfo.lastRotation = _worldEntity.Rotation;
+		_currStateInfo.lastState = RotationState.Idle;
+		_currStateInfo.state = RotationState.Idle;
+
+		_currStateInfo.fractionComplete = 0f;
+		_currStateInfo.rotationAnchor = _worldEntity.Location.ToVector3();
+		_currStateInfo.lastRotation = _worldEntity.Rotation;
+		_currStateInfo.lastLocation = _worldEntity.Location;
+	}
+
 	public void RotateCounterClockwise (Vector3 worldAnchor) {
+		if (_currStateInfo.state != RotationState.Idle) { return; }
 		_currStateInfo.state = RotationState.StartRotatingCounterClockwise;
 		_currStateInfo.rotationAnchor = worldAnchor;
 	}
 
 	public void RotateClockwise (Vector3 worldAnchor) {
+		if (_currStateInfo.state != RotationState.Idle) { return; }
 		_currStateInfo.state = RotationState.StartRotatingClockwise;
 		_currStateInfo.rotationAnchor = worldAnchor;
 	}
@@ -67,6 +87,7 @@ public class Rotatable : MonoBehaviour {
 				_currStateInfo.lastState = _currStateInfo.state;
 				_currStateInfo.state = RotationState.Idle;
 				_currStateInfo.lastRotation = _worldEntity.Rotation;
+				_currStateInfo.lastLocation = _worldEntity.Location;
 				_currStateInfo.fractionComplete = 0f;
 			}
 		}
@@ -77,6 +98,11 @@ public class Rotatable : MonoBehaviour {
 	}
 
 	private bool RotateAroundAxis(Vector3 worldAnchor, int dir, int axis) {
+		_currStateInfo.lastLocation = _worldEntity.Location;
+		_currStateInfo.lastRotation = _worldEntity.Rotation;
+		if (RotationHook != null) {
+			RotationHook();
+		}
 		// Debug.DrawLine((worldAnchor+Vector3.one/2f)*WorldManager.g.TileSize, ((worldAnchor+Vector3.one/2f) + (new IntVector(0,1,0)).ToVector3()*5)*WorldManager.g.TileSize, Color.red, 1000f);
 		Vector3 axisVector = Vector3.zero;
 		axisVector[axis] = dir*90;

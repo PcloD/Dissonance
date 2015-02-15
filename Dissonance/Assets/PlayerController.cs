@@ -9,18 +9,8 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField]
 	XYZChar _avatar3d;
 
-	// public PlayerController g;
-
 	private int _avatarControlIndex = 0;
 	private Vector2 _input;
-
-	// void Awake () {
-	// 	if (g == null) {
-	// 		g = this;
-	// 	} else {
-	// 		Destroy(this);
-	// 	}
-	// }
 
 	void Update () {
 
@@ -33,8 +23,8 @@ public class PlayerController : MonoBehaviour {
 
 		Rotatable r = _avatar3d.ObjectToRotate;
 		if (r != null) {
-			if (Input.GetKeyDown(KeyCode.Z)) { r.RotateCounterClockwise(_avatar3d.Anchor); }
-			else if (Input.GetKeyDown(KeyCode.X)) { r.RotateClockwise(_avatar3d.Anchor); }
+			if (Input.GetKey(KeyCode.Z)) { r.RotateCounterClockwise(_avatar3d.Anchor); }
+			else if (Input.GetKey(KeyCode.X)) { r.RotateClockwise(_avatar3d.Anchor); }
 		}
 
 		WorldEntity2D currAvatar = _avatars2D[_avatarControlIndex];
