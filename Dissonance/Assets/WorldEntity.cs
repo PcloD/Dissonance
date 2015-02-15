@@ -11,21 +11,25 @@ public class WorldEntity : MonoBehaviour {
 	}
 
 	[SerializeField]
-	IntVector _loc = new IntVector(5,5,5);
+	protected IntVector _loc = new IntVector(5,5,5);
 	public IntVector Location {
 		get { return _loc; }
+		set { _loc = value; }
 	}
 
 	Quaternion _rotation = Quaternion.identity;
 	public Quaternion Rotation {
 		get { return _rotation; }
+		set { _rotation = value; }
 	}
 
 	[SerializeField]
-	List<IntVector> _identityLocations = new List<IntVector>();
+	private List<IntVector> _identityLocations = new List<IntVector>();
+	public void SetIdentityLocations (List<IntVector> newLocs) {
+		_identityLocations = newLocs;
+	}
 
 	void Start () {
-		Debug.Log("Register " + gameObject.name);
 		WorldManager.g.RegisterEntity(this);
 	}
 

@@ -30,6 +30,12 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			_avatarControlIndex = (_avatarControlIndex+1)%_avatars2D.Length;
 		}
+		// if (Input.GetKeyDown(KeyCode.Z)) {
+		// 	_avatar3d.RotateLeft();
+		// }
+		// if (Input.GetKeyDown(KeyCode.X)) {
+		// 	_avatar3d.RotateRight();
+		// }
 
 		WorldEntity2D currAvatar = _avatars2D[_avatarControlIndex];
 
@@ -37,6 +43,9 @@ public class PlayerController : MonoBehaviour {
 			_input.x *= -1f;
 		}
 
+		for (int i = 0; i < _avatars2D.Length; i++) {
+			_avatars2D[i].DesiredInput = Vector2.zero;
+		}
 		_avatars2D[_avatarControlIndex].DesiredInput = _input;
 	}
 }

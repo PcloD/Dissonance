@@ -53,17 +53,17 @@ public class WorldManager : MonoBehaviour {
 		Set2DLocationsToEntity(all, e.Orientation, e);
 	}
 
-	public void DeRegisterEntity (WorldEntity e) {
-		_worldEntities.Remove(e);
+	public void DeregisterEntity (WorldEntity e) {
 		List<IntVector> all = e.AbsoluteLocations(e.Location, e.Rotation);
 		Set3DLocationsToEntity(all, null);
+		_worldEntities.Remove(e);
 		UpdateShadows();
 	}
 
-	public void DeRegisterEntity (WorldEntity2D e) {
-		_worldEntities2D.Remove(e);
+	public void DeregisterEntity (WorldEntity2D e) {
 		List<IntVector2D> all = e.AbsoluteLocations(e.Location);
 		Set2DLocationsToEntity(all, e.Orientation, null);
+		_worldEntities2D.Remove(e);
 	}
 
 	bool _initialized = false;
