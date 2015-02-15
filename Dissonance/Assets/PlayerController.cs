@@ -35,9 +35,6 @@ public class PlayerController : MonoBehaviour {
 			_input.x *= -1f;
 		}
 
-		if (_avatars[_avatarControlIndex].DesiredDelta.sqrMagnitude < 0.0001f) {
-			// THIS MUST BE BETWEEN 0 and 1 for each axis!
-			_avatars[_avatarControlIndex].DesiredDelta = _input;
-		}
+		_avatars[_avatarControlIndex].DesiredInput = _input;
 	}
 }

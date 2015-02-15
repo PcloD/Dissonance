@@ -7,10 +7,10 @@ using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
 
-	int _xDim = 20; // Right
-	int _zDim = 20; // Left
-	int _yDim = 20; // Up
-	float _tileSize = 1f;
+	int _xDim = 40; // Right
+	int _zDim = 40; // Left
+	int _yDim = 40; // Up
+	float _tileSize = 0.5f;
 
 	public float TileSize {
 		get { return _tileSize; }
@@ -69,9 +69,9 @@ public class WorldManager : MonoBehaviour {
 	bool _initialized = false;
 	void InitLevel () {
 		// TODO(JULIAN): Load dimensions
-		int _xDim = 20; // Right
-		int _zDim = 20; // Left
-		int _yDim = 20; // Up
+		int _xDim = 40; // Right
+		int _zDim = 40; // Left
+		int _yDim = 40; // Up
 
 		// TODO(JULIAN): Load _world
 		// for (int y = 0; y < _yDim; y++) {
@@ -286,36 +286,61 @@ public class WorldManager : MonoBehaviour {
 	void Update () {
 		for (int i = 0; i < _worldEntities2D.Count; i++) {
 			WorldEntity2D entity = _worldEntities2D[i];
-			Vector2 desDelta = entity.DesiredDelta;
-			Vector2 visOffset = entity.VisualOffset;
-			IntVector2D sqareDelta = new IntVector2D();
-			float margin = 0.0001f;
-			if (desDelta.x > margin) {
-				sqareDelta.x = 1;
-			} else if (desDelta.x < -margin) {
-				sqareDelta.x = -1;
-			}
-			if (desDelta.y > margin) {
-				sqareDelta.y = 1;
-			} else if (desDelta.y < -margin) {
-				sqareDelta.y = -1;
-			}
-			float speed = 4f;
-			if (CanMoveByDelta(entity, sqareDelta)) {
-				desDelta -= (speed * Time.deltaTime) * sqareDelta.ToVector2();
-				visOffset += (speed * Time.deltaTime) * sqareDelta.ToVector2();
+			StateInformation eState = entity.StateInfo;
 
-				if (desDelta.sqrMagnitude < margin) {
-					entity.Location += sqareDelta;
-					desDelta = Vector2.zero;
-					visOffset = Vector2.zero;
+
+			if (eState.state == State.Idle) {
+				IntVector2D delta = new IntVector2D(0,-1);
+				if (CanMoveByDelta(entity, delta)) {
+					if (eState.state != State.Falling) {
+						entity.Fall();
+					}
+				} else if (eState.state == State.Falling) {
+					entity.Land();
+				} else if (entity.DesiredInput.x > 0f) {
+					delta = new IntVector2D(1,0);
+					if (CanMoveByDelta(entity, delta)) {
+						entity.WalkInDirBy(FacingDir.Right, delta);
+					}
+				} else if (entity.DesiredInput.x < 0f) {
+					delta = new IntVector2D(-1,0);
+					if (CanMoveByDelta(entity, delta)) {
+						entity.WalkInDirBy(FacingDir.Left, delta);
+					}
 				}
-			} else {
-				desDelta = Vector2.zero;
 			}
 
-			entity.DesiredDelta = desDelta;
-			entity.VisualOffset = visOffset;
+			// Vector2 desDelta = entity.DesiredDelta;
+			// Vector2 visOffset = entity.VisualOffset;
+			// IntVector2D sqareDelta = new IntVector2D();
+			// float margin = 0.0001f;
+			// if (desDelta.x > margin) {
+			// 	sqareDelta.x = 1;
+			// } else if (desDelta.x < -margin) {
+			// 	sqareDelta.x = -1;
+			// }
+			// if (desDelta.y > margin) {
+			// 	sqareDelta.y = 1;
+			// } else if (desDelta.y < -margin) {
+			// 	sqareDelta.y = -1;
+			// }
+			// float speed = 4f;
+			// if (CanMoveByDelta(entity, sqareDelta)) {
+			// 	desDelta -= (speed * Time.deltaTime) * sqareDelta.ToVector2();
+			// 	visOffset += (speed * Time.deltaTime) * sqareDelta.ToVector2();
+
+			// 	if (desDelta.sqrMagnitude < margin) {
+			// 		entity.Location += sqareDelta;
+			// 		desDelta = Vector2.zero;
+			// 		visOffset = Vector2.zero;
+			// 	}
+			// } else {
+			// 	desDelta = Vector2.zero;
+			// }
+
+			// entity.DesiredDelta = desDelta;
+			// entity.VisualOffset = visOffset;
+
 			// if (desDelta.x > 0) {
 				// if (CanMoveByDelta(entity, new IntVector2D(1,0))) {
 					// desDelta.x -= Time.deltaTime

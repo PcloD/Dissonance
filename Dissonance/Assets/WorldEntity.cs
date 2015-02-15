@@ -10,6 +10,7 @@ public class WorldEntity : MonoBehaviour {
 		get { return _passable; }
 	}
 
+	[SerializeField]
 	IntVector _loc = new IntVector(5,5,5);
 	public IntVector Location {
 		get { return _loc; }
