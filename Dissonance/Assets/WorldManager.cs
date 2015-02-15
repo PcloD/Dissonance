@@ -42,28 +42,28 @@ public class WorldManager : MonoBehaviour {
 
 	public void RegisterEntity (WorldEntity e) {
 		_worldEntities.Add(e);
-
 		List<IntVector> all = e.AbsoluteLocations(e.Location, e.Rotation);
-		for (int i = 0; i < all.Count; i++) {
-			SetContentsAt(all[i].x, all[i].y, all[i].z, e);
-		}
+		Set3DLocationsToEntity(all, e);
 		UpdateShadows();
 	}
 
-	public void RegisterEntity (WorldEntity2D e, PlaneOrientation planeOrientation) {
+	public void RegisterEntity (WorldEntity2D e) {
 		List<IntVector2D> all = e.AbsoluteLocations(e.Location);
 		_worldEntities2D.Add(e);
-		for (int i = 0; i < all.Count; i++) {
-			SetContents2DAt(all[i], planeOrientation, e);
-		}
+		Set2DLocationsToEntity(all, e.Orientation, e);
 	}
 
 	public void DeRegisterEntity (WorldEntity e) {
 		_worldEntities.Remove(e);
+		List<IntVector> all = e.AbsoluteLocations(e.Location, e.Rotation);
+		Set3DLocationsToEntity(all, null);
+		UpdateShadows();
 	}
 
 	public void DeRegisterEntity (WorldEntity2D e) {
 		_worldEntities2D.Remove(e);
+		List<IntVector2D> all = e.AbsoluteLocations(e.Location);
+		Set2DLocationsToEntity(all, e.Orientation, null);
 	}
 
 	bool _initialized = false;
@@ -102,7 +102,7 @@ public class WorldManager : MonoBehaviour {
 			for (int z = 0; z < _zDim; z++) {
 				_zyWorldShadows[z,y] = true;
 				for (int x = 0; x < _xDim; x++) {
-					if (!PassableAt3D(x,y,z)) {
+					if (CastsShadowsAt3D(x,y,z)) {
 						_zyWorldShadows[z,y] = false;
 						break;
 					}
@@ -114,7 +114,7 @@ public class WorldManager : MonoBehaviour {
 			for (int x = 0; x < _xDim; x++) {
 				_xyWorldShadows[x,y] = true;
 				for (int z = 0; z < _zDim; z++) {
-					if (!PassableAt3D(x,y,z)) {
+					if (CastsShadowsAt3D(x,y,z)) {
 						_xyWorldShadows[x,y] = false;
 						break;
 					}
@@ -147,6 +147,28 @@ public class WorldManager : MonoBehaviour {
 		return true;
 	}
 
+	private bool CanJumpByDelta(WorldEntity2D e, IntVector2D v) {
+		// First Move Up, then Sideways!
+
+		int maxHoriz = v[0];
+		int maxVert = v[1];
+
+		int vertDir = Mathf.RoundToInt(Mathf.Sign(maxVert));
+		int horizDir = Mathf.RoundToInt(Mathf.Sign(maxHoriz));
+
+		int vert = 0;
+		while (Mathf.Abs(vert) < Mathf.Abs(maxVert)) {
+			vert += vertDir;
+			if (!CanMoveByDelta(e, new IntVector2D(0, vert))) { return false; }
+		}
+		int horiz = 0;
+		while (Mathf.Abs(horiz) < Mathf.Abs(maxHoriz)) {
+			horiz += horizDir;
+			if (!CanMoveByDelta(e, new IntVector2D(horiz, vert))) { return false; }
+		}
+		return true;
+	}
+
 	bool PassableAtXY(IntVector2D v) {
 		return PassableAtXY(v[0], v[1]);
 	}
@@ -165,16 +187,28 @@ public class WorldManager : MonoBehaviour {
 		return _zyWorldShadows[z,y];
 	}
 
-	bool PassableAt3D(int x, int y, int z) {
+	bool CastsShadowsAt3D(int x, int y, int z) {
 		if (x < 0 || y < 0 || z < 0 ||
 			x >= _xDim || y >= _yDim || z >= _zDim) {
 			return false;
 		}
 		WorldEntity c = ContentsAt(x,y,z);
 		if (c != null) {
-			return c.Passable;
+			return c.CastsShadows;
 		}
-		return true;
+		return false;
+	}
+
+	private void Set2DLocationsToEntity (List<IntVector2D> locations, PlaneOrientation planeOrientation, WorldEntity2D e) {
+		for (int i = 0; i < locations.Count; i++) {
+			SetContents2DAt(locations[i], planeOrientation, e);
+		}
+	}
+
+	private void Set3DLocationsToEntity (List<IntVector> locations, WorldEntity e) {
+		for (int i = 0; i < locations.Count; i++) {
+			SetContentsAt(locations[i].x, locations[i].y, locations[i].z, e);
+		}
 	}
 
 	public WorldEntity2D Contents2DAt(IntVector2D v, PlaneOrientation planeOrientation) {
@@ -256,7 +290,7 @@ public class WorldManager : MonoBehaviour {
 			for (int x = 0; x < _xDim; x++) {
 				for (int z = 0; z < _zDim; z++) {
 					if (ContentsAt(x,y,z) != null) {
-						Gizmos.DrawSphere(new Vector3(x,y,z) * _tileSize, _tileSize/2);
+						Gizmos.DrawSphere(new Vector3(x+0.5f,y+0.5f,z+0.5f) * _tileSize, _tileSize/2);
 					}
 				}
 			}
@@ -264,30 +298,49 @@ public class WorldManager : MonoBehaviour {
 		for (int y = 0; y < _yDim; y++) {
 			for (int x = 0; x < _xDim; x++) {
 				if (!_xyWorldShadows[x,y]) {
-					Gizmos.DrawLine(new Vector3(_tileSize * (x - 0.5f), _tileSize * (y - 0.5f), 0f),
-									new Vector3(_tileSize * (x + 0.5f), _tileSize * (y + 0.5f), 0f));
-					Gizmos.DrawLine(new Vector3(_tileSize * (x - 0.5f), _tileSize * (y + 0.5f), 0f),
-									new Vector3(_tileSize * (x + 0.5f), _tileSize * (y - 0.5f), 0f));
+					Gizmos.color = Color.black;
+					Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y), 0f),
+									new Vector3(_tileSize * (x + 1f), _tileSize * (y + 1f), 0f));
+					Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y + 1f), 0f),
+									new Vector3(_tileSize * (x + 1f), _tileSize * (y), 0f));
+				}
+				if (_xyWorldEntities[x,y] != null) {
+					Gizmos.color = Color.green;
+					Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y), 0f),
+									new Vector3(_tileSize * (x + 1f), _tileSize * (y + 1f), 0f));
+					Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y + 1f), 0f),
+									new Vector3(_tileSize * (x + 1f), _tileSize * (y), 0f));
 				}
 			}
 		}
 		for (int y = 0; y < _yDim; y++) {
 			for (int z = 0; z < _zDim; z++) {
 				if (!_zyWorldShadows[z,y]) {
-					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y - 0.5f), _tileSize * (z - 0.5f)),
-									new Vector3(0f, _tileSize * (y + 0.5f), _tileSize * (z + 0.5f)));
-					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y + 0.5f), _tileSize * (z - 0.5f)),
-									new Vector3(0f, _tileSize * (y - 0.5f), _tileSize * (z + 0.5f)));
+					Gizmos.color = Color.black;
+					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y), _tileSize * (z)),
+									new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z + 1f)));
+					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z)),
+									new Vector3(0f, _tileSize * (y), _tileSize * (z + 1f)));
+				}
+				if (_zyWorldEntities[z,y] != null) {
+					Gizmos.color = Color.green;
+					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y), _tileSize * (z)),
+									new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z + 1f)));
+					Gizmos.DrawLine(new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z)),
+									new Vector3(0f, _tileSize * (y), _tileSize * (z + 1f)));
 				}
 			}
 		}
 	}
 
 	void Update () {
+		// This just moves the players at the moment
 		for (int i = 0; i < _worldEntities2D.Count; i++) {
 			WorldEntity2D entity = _worldEntities2D[i];
-			StateInformation eState = entity.StateInfo;
 
+			Set2DLocationsToEntity(entity.AbsoluteLocations(entity.Location), entity.Orientation, null);
+
+			StateInformation eState = entity.StateInfo;
 
 			if (eState.state == State.Idle) {
 				IntVector2D delta = new IntVector2D(0,-1);
@@ -299,53 +352,36 @@ public class WorldManager : MonoBehaviour {
 					entity.Land();
 				} else if (entity.DesiredInput.x > 0f) {
 					delta = new IntVector2D(1,0);
+					IntVector2D jumpDelta = new IntVector2D(1,1);
 					if (CanMoveByDelta(entity, delta)) {
 						entity.WalkInDirBy(FacingDir.Right, delta);
+					} else if (CanJumpByDelta(entity, jumpDelta)) {
+						entity.JumpInDirBy(FacingDir.Right, jumpDelta);
 					}
 				} else if (entity.DesiredInput.x < 0f) {
 					delta = new IntVector2D(-1,0);
+					IntVector2D jumpDelta = new IntVector2D(-1,1);
 					if (CanMoveByDelta(entity, delta)) {
 						entity.WalkInDirBy(FacingDir.Left, delta);
+					} else if (CanJumpByDelta(entity, jumpDelta)) {
+						entity.JumpInDirBy(FacingDir.Left, jumpDelta);
 					}
 				}
 			}
-
-			// Vector2 desDelta = entity.DesiredDelta;
-			// Vector2 visOffset = entity.VisualOffset;
-			// IntVector2D sqareDelta = new IntVector2D();
-			// float margin = 0.0001f;
-			// if (desDelta.x > margin) {
-			// 	sqareDelta.x = 1;
-			// } else if (desDelta.x < -margin) {
-			// 	sqareDelta.x = -1;
-			// }
-			// if (desDelta.y > margin) {
-			// 	sqareDelta.y = 1;
-			// } else if (desDelta.y < -margin) {
-			// 	sqareDelta.y = -1;
-			// }
-			// float speed = 4f;
-			// if (CanMoveByDelta(entity, sqareDelta)) {
-			// 	desDelta -= (speed * Time.deltaTime) * sqareDelta.ToVector2();
-			// 	visOffset += (speed * Time.deltaTime) * sqareDelta.ToVector2();
-
-			// 	if (desDelta.sqrMagnitude < margin) {
-			// 		entity.Location += sqareDelta;
-			// 		desDelta = Vector2.zero;
-			// 		visOffset = Vector2.zero;
-			// 	}
-			// } else {
-			// 	desDelta = Vector2.zero;
-			// }
-
-			// entity.DesiredDelta = desDelta;
-			// entity.VisualOffset = visOffset;
-
-			// if (desDelta.x > 0) {
-				// if (CanMoveByDelta(entity, new IntVector2D(1,0))) {
-					// desDelta.x -= Time.deltaTime
-				// }
-			// }
+			Set2DLocationsToEntity(entity.AbsoluteLocations(entity.Location), entity.Orientation, entity);
 		}
+
+		//
+		for (int i = 0; i < _worldEntities.Count; i++) {
+			WorldEntity entity = _worldEntities[i];
+			List<IntVector> all = entity.AbsoluteLocations(entity.Location, entity.Rotation);
+			Set3DLocationsToEntity(all, null);
+			entity.Simulate();
+			all = entity.AbsoluteLocations(entity.Location, entity.Rotation);
+			Set3DLocationsToEntity(all, entity);
+			UpdateShadows();
+		}
+
+
 	}
 }

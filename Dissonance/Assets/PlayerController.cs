@@ -5,7 +5,9 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
 	[SerializeField]
-	WorldEntity2D[] _avatars;
+	WorldEntity2D[] _avatars2D;
+	[SerializeField]
+	WorldEntity _avatar3d;
 
 	// public PlayerController g;
 
@@ -26,15 +28,15 @@ public class PlayerController : MonoBehaviour {
 		_input.x = Input.GetAxisRaw("Horizontal");
 		_input.y = Input.GetAxisRaw("Vertical");
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			_avatarControlIndex = (_avatarControlIndex+1)%_avatars.Length;
+			_avatarControlIndex = (_avatarControlIndex+1)%_avatars2D.Length;
 		}
 
-		WorldEntity2D currAvatar = _avatars[_avatarControlIndex];
+		WorldEntity2D currAvatar = _avatars2D[_avatarControlIndex];
 
 		if (currAvatar.Orientation == PlaneOrientation.XY) {
 			_input.x *= -1f;
 		}
 
-		_avatars[_avatarControlIndex].DesiredInput = _input;
+		_avatars2D[_avatarControlIndex].DesiredInput = _input;
 	}
 }

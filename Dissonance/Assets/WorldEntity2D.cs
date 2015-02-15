@@ -14,6 +14,7 @@ public enum FacingDir {
 public enum State {
 	Idle,
 	Walking,
+	Jumping,
 	Falling
 }
 
@@ -47,6 +48,13 @@ public class WorldEntity2D : MonoBehaviour {
 	[SerializeField]
 	Transform _visuals;
 
+	[System.Serializable]
+	public class Speeds {
+		public float movementSpeed = 4f;
+		public float fallSpeed = 2f;
+	}
+	[SerializeField]
+	private Speeds _speeds = new Speeds();
 
 	private StateInformation _currStateInfo;
 	public StateInformation StateInfo {
@@ -68,6 +76,14 @@ public class WorldEntity2D : MonoBehaviour {
 		_currStateInfo.fractionComplete = 0f;
 	}
 
+	public void JumpInDirBy (FacingDir dir, IntVector2D deltaLoc) {
+		_currStateInfo.lastLoc = _loc;
+		_loc += deltaLoc;
+		_currStateInfo.state = State.Jumping;
+		_currStateInfo.facingDirection = dir;
+		_currStateInfo.fractionComplete = 0f;
+	}
+
 	public void Fall () {
 		_currStateInfo.lastLoc = _loc;
 		_loc += new IntVector2D(0,-1);
@@ -82,15 +98,10 @@ public class WorldEntity2D : MonoBehaviour {
 	}
 
 	void Start () {
-		WorldManager.g.RegisterEntity(this, _planeOrientation);
-
+		WorldManager.g.RegisterEntity(this);
 		_currStateInfo.facingDirection = FacingDir.Left;
 		_currStateInfo.lastLoc = _loc;
 	}
-
-
-	float _movementSpeed = 4f;
-	float _fallSpeed = 2f;
 
 	void Update () {
 		Vector3 v = Vector3.zero;
@@ -98,7 +109,7 @@ public class WorldEntity2D : MonoBehaviour {
 		// TODO(Julian): Add Animation here!
 		switch (_planeOrientation) {
 			case PlaneOrientation.XY:
-				v = _currStateInfo.lastLoc.ToVector2() + visualOffset;
+				v = _currStateInfo.lastLoc.ToVector2() + visualOffset;// - Vector2.one/2f;
 				break;
 			case PlaneOrientation.ZY:
 				v.z = _currStateInfo.lastLoc.x + visualOffset.x;
@@ -112,10 +123,10 @@ public class WorldEntity2D : MonoBehaviour {
 		float speed;
 		switch (_currStateInfo.state) {
 			case State.Falling:
-				speed = _fallSpeed;
+				speed = _speeds.fallSpeed;
 				break;
 			default:
-				speed = _movementSpeed;
+				speed = _speeds.movementSpeed;
 				break;
 		}
 
@@ -139,31 +150,5 @@ public class WorldEntity2D : MonoBehaviour {
 			absoluteLocations.Add(_identityLocations[i] + location);
 		}
 		return absoluteLocations;
-	}
-
-	void OnDrawGizmos () {
-		if (WorldManager.g == null) { return; }
-		Gizmos.color = Color.green;
-		var locs = AbsoluteLocations(_loc);
-		float tileSize = WorldManager.g.TileSize;
-		if (_planeOrientation == PlaneOrientation.XY) {
-			for (int i = 0; i < locs.Count; i++) {
-				int x = locs[i][0];
-				int y = locs[i][1];
-				Gizmos.DrawLine(new Vector3(tileSize * (x - 0.5f), tileSize * (y - 0.5f), 0f),
-								new Vector3(tileSize * (x + 0.5f), tileSize * (y + 0.5f), 0f));
-				Gizmos.DrawLine(new Vector3(tileSize * (x - 0.5f), tileSize * (y + 0.5f), 0f),
-								new Vector3(tileSize * (x + 0.5f), tileSize * (y - 0.5f), 0f));
-			}
-		} else {
-			for (int i = 0; i < locs.Count; i++) {
-				int z = locs[i][0];
-				int y = locs[i][1];
-				Gizmos.DrawLine(new Vector3(0f, tileSize * (y - 0.5f), tileSize * (z - 0.5f)),
-								new Vector3(0f, tileSize * (y + 0.5f), tileSize * (z + 0.5f)));
-				Gizmos.DrawLine(new Vector3(0f, tileSize * (y + 0.5f), tileSize * (z - 0.5f)),
-								new Vector3(0f, tileSize * (y - 0.5f), tileSize * (z + 0.5f)));
-			}
-		}
 	}
 }
