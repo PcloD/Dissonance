@@ -6,8 +6,9 @@ using System.Collections.Generic;
 public class WorldEntity : MonoBehaviour {
 
 	private bool _castsShadows = true;
-	public virtual bool CastsShadows {
+	public bool CastsShadows {
 		get { return _castsShadows; }
+		set { _castsShadows = value; }
 	}
 
 	[SerializeField]
@@ -29,8 +30,24 @@ public class WorldEntity : MonoBehaviour {
 		_identityLocations = newLocs;
 	}
 
+	private bool _registered = false;
+
+	public void RegisterMe () {
+		if (!_registered) {
+			WorldManager.g.RegisterEntity(this);
+			_registered = true;
+		}
+	}
+
+	public void DeregisterMe () {
+		if (_registered) {
+			WorldManager.g.DeregisterEntity(this);
+			_registered = false;
+		}
+	}
+
 	void Start () {
-		WorldManager.g.RegisterEntity(this);
+		RegisterMe();
 	}
 
 	public List<IntVector> AbsoluteLocations (IntVector location, Quaternion rotation) {
@@ -41,8 +58,13 @@ public class WorldEntity : MonoBehaviour {
 		return absoluteLocations;
 	}
 
-	public virtual void Simulate() {
+	public delegate void SimulatorDelegates();
+    public SimulatorDelegates Simulators;
 
+	public virtual void Simulate() {
+		if (Simulators != null) {
+			Simulators();
+		}
 	}
 
 	// private bool RotateAroundAxis(IntVector worldAnchor, int dir, int axis) {

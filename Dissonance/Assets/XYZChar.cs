@@ -3,24 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class XYZChar : WorldEntity {
+public class XYZChar : MonoBehaviour {
 	[SerializeField]
 	WorldEntity2D _xyComponent;
 	[SerializeField]
 	WorldEntity2D _zyComponent;
 
-	private bool _registered = false;
 	private List<IntVector> _bottomParts;
+	private Vector3 _localAnchor;
+	private WorldEntity _worldEntity;
+
+	void Awake () {
+		_worldEntity = GetComponent<WorldEntity>();
+	}
+
+	bool YsMatch {
+		get { return _xyComponent.Location[1] == _zyComponent.Location[1]; }
+	}
 
 	bool IsVisible {
 		get {
-			bool ysMatch = _xyComponent.Location[1] == _zyComponent.Location[1];
-			if (!ysMatch) { return false; }
-			// foreach (var x in Beneath) {
-			// 	Debug.Log(x);
-			// }
-			// Debug.Log("B");
-			return (Beneath.Length == 1 && Beneath[0] != null);
+			if (!YsMatch) { return false; }
+			WorldEntity[] beneath = Beneath;
+			return (beneath.Length == 1 && beneath[0] != null);
 		}
 	}
 
@@ -35,21 +40,25 @@ public class XYZChar : WorldEntity {
 		}
 	}
 
-	private void RegisterMe () {
-		if (!_registered) {
-			WorldManager.g.RegisterEntity(this);
-			_registered = true;
+	public Rotatable ObjectToRotate {
+		get {
+			if (!YsMatch) { return null; }
+			WorldEntity[] beneath = Beneath;
+			if (beneath.Length == 1 && beneath[0] != null) {
+				return beneath[0].GetComponent<Rotatable>();
+			} else {
+				return null;
+			}
 		}
 	}
 
-	private void DeregisterMe () {
-		if (_registered) {
-			WorldManager.g.DeregisterEntity(this);
-			_registered = false;
-		}
+	public Vector3 Anchor {
+		get { return _localAnchor + _worldEntity.Location.ToVector3(); }
 	}
 
 	void Start () {
+		_worldEntity.CastsShadows = false;
+
 		var xyLocs = _xyComponent.AbsoluteLocations(new IntVector2D());
 		var zyLocs = _xyComponent.AbsoluteLocations(new IntVector2D());
 		HashSet<IntVector> xyzLocs = new HashSet<IntVector>();
@@ -63,24 +72,32 @@ public class XYZChar : WorldEntity {
 			}
 		}
 		_bottomParts = new List<IntVector>();
+		_localAnchor = Vector3.zero;
 		foreach (var pt in xyzLocs) {
 			identityLocations.Add(pt);
 			if (pt.y == lowestY) {
 				_bottomParts.Add(pt);
+				_localAnchor += pt.ToVector3();
 			}
 		}
-		SetIdentityLocations(identityLocations);
+		_localAnchor /= _bottomParts.Count;
+		_worldEntity.SetIdentityLocations(identityLocations);
 
+		_worldEntity.Location = ComputedLocation;
 
-		RegisterMe();
+		_worldEntity.RegisterMe();
+	}
+
+	void OnEnable () {
+		_worldEntity.Simulators += Simulate;
+	}
+
+	void OnDisable () {
+		_worldEntity.Simulators += Simulate;
 	}
 
 	// _loc
 	// List<IntVector> _identityLocations = new List<IntVector>();
-
-	public override bool CastsShadows {
-		get { return false; }
-	}
 
 	IntVector ComputedLocation {
 		get {
@@ -90,12 +107,13 @@ public class XYZChar : WorldEntity {
 
 	void Update () {
 		if (IsVisible) {
-			RegisterMe();
+			_worldEntity.RegisterMe();
 		} else {
-			DeregisterMe();
+			_worldEntity.DeregisterMe();
 		}
 	}
-	public override void Simulate () {
-		_loc = ComputedLocation;
+
+	private void Simulate () {
+		_worldEntity.Location = ComputedLocation;
 	}
 }

@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField]
 	WorldEntity2D[] _avatars2D;
 	[SerializeField]
-	WorldEntity _avatar3d;
+	XYZChar _avatar3d;
 
 	// public PlayerController g;
 
@@ -30,12 +30,12 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			_avatarControlIndex = (_avatarControlIndex+1)%_avatars2D.Length;
 		}
-		// if (Input.GetKeyDown(KeyCode.Z)) {
-		// 	_avatar3d.RotateLeft();
-		// }
-		// if (Input.GetKeyDown(KeyCode.X)) {
-		// 	_avatar3d.RotateRight();
-		// }
+
+		Rotatable r = _avatar3d.ObjectToRotate;
+		if (r != null) {
+			if (Input.GetKeyDown(KeyCode.Z)) { r.RotateCounterClockwise(_avatar3d.Anchor); }
+			else if (Input.GetKeyDown(KeyCode.X)) { r.RotateClockwise(_avatar3d.Anchor); }
+		}
 
 		WorldEntity2D currAvatar = _avatars2D[_avatarControlIndex];
 

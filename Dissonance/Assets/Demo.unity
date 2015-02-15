@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 107498615}
   - 114: {fileID: 107498616}
+  - 114: {fileID: 107498617}
   m_Layer: 0
   m_Name: XYZChar
   m_TagString: Untagged
@@ -159,16 +160,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d20b01363c44a4e9a9bb06d870880af3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _xyComponent: {fileID: 965861240}
+  _zyComponent: {fileID: 583936798}
+--- !u!114 &107498617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 107498614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364ed32d39fee48a49aab8cc17f15ef4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _loc:
     x: 5
     y: 5
     z: 5
-  _identityLocations:
-  - x: 0
-    y: 0
-    z: 0
-  _xyComponent: {fileID: 965861240}
-  _zyComponent: {fileID: 583936798}
+  _identityLocations: []
 --- !u!1 &355996348
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,6 +187,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 355996350}
   - 114: {fileID: 355996349}
+  - 114: {fileID: 355996351}
   m_Layer: 0
   m_Name: Rotatable
   m_TagString: Untagged
@@ -231,6 +241,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
+--- !u!114 &355996351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 355996348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currStateInfo:
+    lastState: 0
+    state: 0
+    fractionComplete: 0
+    rotationAnchor: {x: 0, y: 0, z: 0}
+    lastRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &583936796
 GameObject:
   m_ObjectHideFlags: 0
