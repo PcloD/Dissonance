@@ -25,8 +25,6 @@ public class WorldManager : MonoBehaviour {
 	WorldEntity2D[,] _xyWorldEntities;
 	WorldEntity2D[,] _zyWorldEntities;
 
-	float timeStepDuration = 0.2f;
-
 	public static WorldManager g;
 	void Awake () {
 		if (g == null) {

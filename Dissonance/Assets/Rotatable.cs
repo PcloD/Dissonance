@@ -133,6 +133,8 @@ public class Rotatable : MonoBehaviour {
 		// 	WorldManager.g.SetContentsAt(newLocs[i].x, newLocs[i].y, newLocs[i].z, this);
 		// }
 
+
+		// TODO(Julian): Prevent rotation if not possible!
 		_worldEntity.Location = newLoc;
 		_worldEntity.Rotation = newRotation;
 

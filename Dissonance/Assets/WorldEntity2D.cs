@@ -103,6 +103,19 @@ public class WorldEntity2D : MonoBehaviour {
 		_currStateInfo.lastLoc = _loc;
 	}
 
+	public Vector2 VisualPos {
+		get {
+			switch (_planeOrientation) {
+				case PlaneOrientation.XY:
+					return (Vector2)_visuals.position;
+				case PlaneOrientation.ZY:
+					return new Vector2(_visuals.position.z, _visuals.position.y);
+				default:
+					return Vector2.zero;
+			}
+		}
+	}
+
 	void Update () {
 		Vector3 v = Vector3.zero;
 		Vector2 visualOffset = (_loc.ToVector2() - _currStateInfo.lastLoc.ToVector2()) * (_currStateInfo.fractionComplete);

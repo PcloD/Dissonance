@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// NOTE(Julian): This class is really only intended for debugging purposes.
+// Proper visuals will have to be handled slightly differently
+
 public class GenerateWorldEntityVis : MonoBehaviour {
 
 	private WorldEntity _worldEntity;
 	private Rotatable _rotatable;
+	private MovementMachine _movementMachine;
 	private MeshFilter _meshFilter;
 	private MeshRenderer _meshRenderer;
 	private Transform _meshTransform;
@@ -13,6 +17,7 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 	void Awake () {
 		_worldEntity = GetComponent<WorldEntity>();
 		_rotatable = GetComponent<Rotatable>();
+		_movementMachine = GetComponent<MovementMachine>();
 		_transform = transform;
 	}
 
@@ -178,7 +183,11 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 	}
 
 	void Update () {
-		if (_rotatable != null) {
+		if (_movementMachine != null) {
+			_meshTransform.position = (Vector3.Lerp(_movementMachine.StateInfo.lastLocation.ToVector3(),
+													_worldEntity.Location.ToVector3(),
+													_movementMachine.StateInfo.fractionComplete) + Vector3.one/2f) * WorldManager.g.TileSize;
+		} else if (_rotatable != null) {
 			_transform.rotation = Quaternion.Slerp(_rotatable.StateInfo.lastRotation, _worldEntity.Rotation, _rotatable.StateInfo.fractionComplete);
 		} else {
 			_transform.position = (_worldEntity.Location.ToVector3() + Vector3.one/2f) * WorldManager.g.TileSize;

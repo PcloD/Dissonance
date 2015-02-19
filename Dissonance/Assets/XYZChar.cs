@@ -8,6 +8,10 @@ public class XYZChar : MonoBehaviour {
 	WorldEntity2D _xyComponent;
 	[SerializeField]
 	WorldEntity2D _zyComponent;
+	[SerializeField]
+	GameObject _visuals;
+	[SerializeField]
+	Transform _visualsTransform;
 
 	private List<IntVector> _bottomParts;
 	private Vector3 _localAnchor;
@@ -15,6 +19,7 @@ public class XYZChar : MonoBehaviour {
 
 	void Awake () {
 		_worldEntity = GetComponent<WorldEntity>();
+		_visualsTransform = _visuals.transform;
 	}
 
 	bool YsMatch {
@@ -96,9 +101,6 @@ public class XYZChar : MonoBehaviour {
 		_worldEntity.Simulators += Simulate;
 	}
 
-	// _loc
-	// List<IntVector> _identityLocations = new List<IntVector>();
-
 	IntVector ComputedLocation {
 		get {
 			return new IntVector(_xyComponent.Location[0], _xyComponent.Location[1], _zyComponent.Location[0]);
@@ -108,8 +110,12 @@ public class XYZChar : MonoBehaviour {
 	void Update () {
 		if (IsVisible) {
 			_worldEntity.RegisterMe();
+			_visuals.SetActive(true);
+			Vector3 v = new Vector3(_xyComponent.VisualPos[0], _xyComponent.VisualPos[1], _zyComponent.VisualPos[0]);
+			_visualsTransform.position = v;
 		} else {
 			_worldEntity.DeregisterMe();
+			_visuals.SetActive(false);
 		}
 	}
 

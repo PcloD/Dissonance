@@ -61,7 +61,7 @@ public class WorldEntity : MonoBehaviour {
 	public delegate void SimulatorDelegates();
     public SimulatorDelegates Simulators;
 
-	public virtual void Simulate() {
+	public void Simulate() {
 		if (Simulators != null) {
 			Simulators();
 		}
