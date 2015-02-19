@@ -42,6 +42,15 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 		_meshTransform.parent = transform;
 		_meshTransform.position = (_worldEntity.Location.ToVector3() + Vector3.one/2f) * WorldManager.g.TileSize;
 		MakeMesh();
+		Color color;
+		if (_movementMachine != null) {
+			color = Color.green;
+		} else if (_rotatable != null) {
+			color = Color.blue;
+		} else {
+			color = Color.white;
+		}
+		_meshRenderer.material.SetColor("_MainColor", color);
 	}
 
 	private void MakeMesh () {
