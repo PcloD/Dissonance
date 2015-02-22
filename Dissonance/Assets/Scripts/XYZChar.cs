@@ -5,12 +5,11 @@ using System.Linq;
 
 public class XYZChar : MonoBehaviour {
 	[SerializeField]
-	WorldEntity2D _xyComponent;
+	Char2D _xyComponent;
 	[SerializeField]
-	WorldEntity2D _zyComponent;
+	Char2D _zyComponent;
 	[SerializeField]
 	GameObject _visuals;
-	[SerializeField]
 	Transform _visualsTransform;
 
 	private List<IntVector> _bottomParts;

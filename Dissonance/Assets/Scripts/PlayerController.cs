@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
 	[SerializeField]
-	WorldEntity2D[] _avatars2D;
+	Char2D[] _avatars2D;
 	[SerializeField]
 	XYZChar _avatar3d;
 
@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour {
 			else if (Input.GetKey(KeyCode.X)) { r.RotateClockwise(_avatar3d.Anchor); }
 		}
 
-		WorldEntity2D currAvatar = _avatars2D[_avatarControlIndex];
+		Char2D currAvatar = _avatars2D[_avatarControlIndex];
 
 		if (currAvatar.Orientation == PlaneOrientation.XY) {
 			_input.x *= -1f;

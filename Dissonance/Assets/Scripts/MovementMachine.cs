@@ -2,12 +2,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum Axis {
+	X = 0,
+	Y = 1,
+	Z = 2
+}
+
 [System.Serializable]
 public struct MovementMachineStateInformation {
+	[HideInInspector]
 	public IntVector lastLocation;
+	[HideInInspector]
 	public float fractionComplete; // Range from 0-1, inclusive
+	[HideInInspector]
 	public int movementDelta;
-	public int movementAxis; // 0, 1, 2
+	public Axis movementAxis; // 0, 1, 2
 }
 
 public class MovementMachine : MonoBehaviour, IControllableMachine {
@@ -22,8 +31,18 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 		get { return _currStateInfo; }
 	}
 
-	void Awake () {
+	public bool IsCached {
+		get {
+			return _worldEntity != null;
+		}
+	}
+
+	public void Cache () {
 		_worldEntity = GetComponent<WorldEntity>();
+	}
+
+	void Awake () {
+		Cache();
 	}
 
 	void Start () {
@@ -73,10 +92,23 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 		if (_currStateInfo.movementDelta != 0) {
 			_currStateInfo.lastLocation = _worldEntity.Location;
 			IntVector delta = new IntVector();
-			delta[_currStateInfo.movementAxis] = _currStateInfo.movementDelta;
+			delta[(int)_currStateInfo.movementAxis] = _currStateInfo.movementDelta;
 			_worldEntity.Location = _worldEntity.Location + delta;
 			// TODO(Julian): Prevent movement if not possible!
 			_currStateInfo.movementDelta = 0;
+		}
+	}
+
+	void OnDrawGizmos () {
+		// NOTE(Julian): For debug visualization in Unity editor
+		if (!Application.isPlaying && WorldManager.g != null) {
+			if (_rotationController != null) {
+				if (!IsCached) { Cache(); }
+				if (!_rotationController.IsCached) { _rotationController.Cache(); };
+				Gizmos.color = Color.green;
+				Gizmos.DrawLine(_rotationController.Location.ToVector3() * WorldManager.g.TileSize,
+							   	_worldEntity.Location.ToVector3() * WorldManager.g.TileSize);
+			}
 		}
 	}
 }

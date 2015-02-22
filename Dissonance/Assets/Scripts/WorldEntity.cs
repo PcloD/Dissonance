@@ -67,6 +67,46 @@ public class WorldEntity : MonoBehaviour {
 		}
 	}
 
+	void OnDrawGizmos () {
+		// NOTE(Julian): For debug visualization in Unity editor
+		if (!Application.isPlaying && WorldManager.g != null) {
+			Rotatable r = GetComponent<Rotatable>();
+			MovementMachine m = GetComponent<MovementMachine>();
+			Color color;
+			if (m != null) {
+				color = Color.green;
+			} else if (r != null) {
+				color = Color.blue;
+			} else {
+				color = Color.white;
+			}
+
+			float tileSize = WorldManager.g.TileSize;
+			List<IntVector> all = AbsoluteLocations(_loc, Quaternion.identity);
+			int x,y,z;
+			for (int i = 0; i < all.Count; i++) {
+				x = all[i].x;
+				y = all[i].y;
+				z = all[i].z;
+				Gizmos.color = color;
+				Gizmos.DrawCube(new Vector3(x+0.5f,y+0.5f,z+0.5f) * tileSize, Vector3.one * tileSize * 0.90f);
+
+				Gizmos.color = Color.black;
+
+				Gizmos.DrawLine(new Vector3(tileSize * (x), tileSize * (y), 0f),
+								new Vector3(tileSize * (x + 1f), tileSize * (y + 1f), 0f));
+				Gizmos.DrawLine(new Vector3(tileSize * (x), tileSize * (y + 1f), 0f),
+								new Vector3(tileSize * (x + 1f), tileSize * (y), 0f));
+
+				Gizmos.DrawLine(new Vector3(0f, tileSize * (y), tileSize * (z)),
+								new Vector3(0f, tileSize * (y + 1f), tileSize * (z + 1f)));
+				Gizmos.DrawLine(new Vector3(0f, tileSize * (y + 1f), tileSize * (z)),
+								new Vector3(0f, tileSize * (y), tileSize * (z + 1f)));
+
+			}
+		}
+	}
+
 	// private bool RotateAroundAxis(IntVector worldAnchor, int dir, int axis) {
 	// 	// Vector3 axisVector = Vector3.zero;
 	// 	// axisVector[axis] = dir*90;

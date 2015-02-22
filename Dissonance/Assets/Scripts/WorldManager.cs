@@ -10,6 +10,7 @@ public class WorldManager : MonoBehaviour {
 	int _xDim = 40; // Right
 	int _zDim = 40; // Left
 	int _yDim = 40; // Up
+	[SerializeField]
 	float _tileSize = 0.5f;
 
 	public float TileSize {
@@ -27,10 +28,14 @@ public class WorldManager : MonoBehaviour {
 
 	public static WorldManager g;
 	void Awake () {
-		if (g == null) {
-			g = this;
-			InitLevel();
-		} else {
+		EnsureGExists();
+		InitLevel();
+	}
+
+	public void EnsureGExists () {
+		if (WorldManager.g == null) {
+			WorldManager.g = this;
+		} else if (WorldManager.g != this) {
 			Destroy(this);
 		}
 	}
@@ -122,7 +127,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 
-	private bool CanMoveByDelta(WorldEntity2D e, IntVector2D v) {
+	public bool CanMoveByDelta(WorldEntity2D e, IntVector2D v) {
 		IntVector2D resLoc = e.Location + v;
 		List<IntVector2D> occupiedAfter = e.AbsoluteLocations(resLoc);
 
@@ -145,7 +150,7 @@ public class WorldManager : MonoBehaviour {
 		return true;
 	}
 
-	private bool CanJumpByDelta(WorldEntity2D e, IntVector2D v) {
+	public bool CanJumpByDelta(WorldEntity2D e, IntVector2D v) {
 		// First Move Up, then Sideways!
 
 		int maxHoriz = v[0];
@@ -283,6 +288,9 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	void OnDrawGizmos () {
+		if (!Application.isPlaying) {
+			EnsureGExists(); // For Debugging!
+		}
 		if (!_initialized) return;
 		for (int y = 0; y < _yDim; y++) {
 			for (int x = 0; x < _xDim; x++) {
@@ -332,54 +340,39 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	void Update () {
-		// This just moves the players at the moment
+		Profiler.BeginSample("2d sim");
 		for (int i = 0; i < _worldEntities2D.Count; i++) {
 			WorldEntity2D entity = _worldEntities2D[i];
-
+			Profiler.BeginSample("Clear 2d loc");
 			Set2DLocationsToEntity(entity.AbsoluteLocations(entity.Location), entity.Orientation, null);
-
-			StateInformation eState = entity.StateInfo;
-
-			if (eState.state == State.Idle) {
-				IntVector2D delta = new IntVector2D(0,-1);
-				if (CanMoveByDelta(entity, delta)) {
-					if (eState.state != State.Falling) {
-						entity.Fall();
-					}
-				} else if (eState.state == State.Falling) {
-					entity.Land();
-				} else if (entity.DesiredInput.x > 0f) {
-					delta = new IntVector2D(1,0);
-					IntVector2D jumpDelta = new IntVector2D(1,1);
-					if (CanMoveByDelta(entity, delta)) {
-						entity.WalkInDirBy(FacingDir.Right, delta);
-					} else if (CanJumpByDelta(entity, jumpDelta)) {
-						entity.JumpInDirBy(FacingDir.Right, jumpDelta);
-					}
-				} else if (entity.DesiredInput.x < 0f) {
-					delta = new IntVector2D(-1,0);
-					IntVector2D jumpDelta = new IntVector2D(-1,1);
-					if (CanMoveByDelta(entity, delta)) {
-						entity.WalkInDirBy(FacingDir.Left, delta);
-					} else if (CanJumpByDelta(entity, jumpDelta)) {
-						entity.JumpInDirBy(FacingDir.Left, jumpDelta);
-					}
-				}
-			}
+			Profiler.EndSample();
+			Profiler.BeginSample("Simulate 2d entity");
+			entity.Simulate();
+			Profiler.EndSample();
+			Profiler.BeginSample("Fill 2d loc");
 			Set2DLocationsToEntity(entity.AbsoluteLocations(entity.Location), entity.Orientation, entity);
+			Profiler.EndSample();
 		}
+		Profiler.EndSample();
 
-		//
+		Profiler.BeginSample("3d sim");
 		for (int i = 0; i < _worldEntities.Count; i++) {
 			WorldEntity entity = _worldEntities[i];
+			Profiler.BeginSample("Clear 3d loc");
 			List<IntVector> all = entity.AbsoluteLocations(entity.Location, entity.Rotation);
 			Set3DLocationsToEntity(all, null);
+			Profiler.EndSample();
+			Profiler.BeginSample("Simulate 3d entity");
 			entity.Simulate();
+			Profiler.EndSample();
+			Profiler.BeginSample("Fill 3d loc");
 			all = entity.AbsoluteLocations(entity.Location, entity.Rotation);
 			Set3DLocationsToEntity(all, entity);
-			UpdateShadows();
+			Profiler.EndSample();
 		}
-
-
+		Profiler.EndSample();
+		Profiler.BeginSample("Shadow Sim");
+		UpdateShadows();
+		Profiler.EndSample();
 	}
 }

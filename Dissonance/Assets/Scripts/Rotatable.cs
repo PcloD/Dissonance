@@ -4,12 +4,17 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public struct RotationStateInformation {
+	[HideInInspector]
 	public RotationState lastState;
 	public RotationState state;
 
+	[HideInInspector]
 	public float fractionComplete; // Range from 0-1, inclusive
+	[HideInInspector]
 	public Vector3 rotationAnchor;
+	[HideInInspector]
 	public Quaternion lastRotation;
+	[HideInInspector]
 	public IntVector lastLocation;
 }
 
@@ -34,8 +39,22 @@ public class Rotatable : MonoBehaviour {
 	public delegate void RotationBeganDelegates();
     public RotationBeganDelegates RotationHook;
 
-	void Awake () {
+	public IntVector Location {
+		get { return _worldEntity.Location; }
+	}
+
+	public bool IsCached {
+		get {
+			return _worldEntity != null;
+		}
+	}
+
+	public void Cache () {
 		_worldEntity = GetComponent<WorldEntity>();
+	}
+
+	void Awake () {
+		Cache();
 	}
 
 	void OnEnable () {
@@ -141,5 +160,4 @@ public class Rotatable : MonoBehaviour {
 		// WorldManager.g.UpdatePassability();
 		return true;
 	}
-
 }
