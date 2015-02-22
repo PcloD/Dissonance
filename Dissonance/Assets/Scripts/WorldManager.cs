@@ -46,6 +46,10 @@ public class WorldManager : MonoBehaviour {
 		get { return _planes; }
 	}
 
+	void OnValidate () {
+ 		UpdatePlanes();
+	}
+
 	[SerializeField]
 	Transform _shadowContainer;
 	public Transform ShadowContainer {
@@ -108,11 +112,18 @@ public class WorldManager : MonoBehaviour {
 		// 	SetContentsAt((int)(Random.value * _xDim), (int)(Random.value * _yDim), (int)(Random.value * _zDim), new TileContents());
 		// }
 		_xyWorldEntities = new WorldEntity2D[_xDim,_yDim];
-		_zyWorldEntities = new WorldEntity2D[_xDim,_yDim];
+		_zyWorldEntities = new WorldEntity2D[_zDim,_yDim];
 		_xyWorldShadows = new bool[_xDim,_yDim];
 		_zyWorldShadows = new bool[_zDim,_yDim];
+		UpdatePlanes();
 		_initialized = true;
 		UpdateShadows();
+	}
+
+	private void UpdatePlanes () {
+		for (int i = 0; i < _planes.Length; i++) {
+			_planes[i].Init(_xDim, _yDim, _zDim);
+		}
 	}
 
 	private void UpdateShadows () {

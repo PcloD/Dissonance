@@ -332,7 +332,7 @@ MonoBehaviour:
   - x: 1
     y: 2
   _loc:
-    x: 6
+    x: 5
     y: 6
 --- !u!114 &11440082
 MonoBehaviour:

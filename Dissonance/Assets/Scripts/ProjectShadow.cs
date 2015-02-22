@@ -133,14 +133,14 @@ public class ProjectShadow : MonoBehaviour {
 				subj.Add(p);
 			}
 
-			float width = 10f;
-			float height = WorldManager.g.WorldDims.y;
 			Paths clip = new Paths(1);
 			clip.Add(new Path(4));
-			Vector2 c1 = ProjectionMath.TwoDimCoordsOnPlane(plane.Origin + plane.Up * height - plane.Right * width, plane);
-			Vector2 c2 = ProjectionMath.TwoDimCoordsOnPlane(plane.Origin + plane.Up * height + plane.Right * width, plane);
-			Vector2 c3 = ProjectionMath.TwoDimCoordsOnPlane(plane.Origin - plane.Up * height + plane.Right * width, plane);
-			Vector2 c4 = ProjectionMath.TwoDimCoordsOnPlane(plane.Origin - plane.Up * height - plane.Right * width, plane);
+			Vector2 c1, c2, c3, c4;
+			Vector3[] coords = plane.Coords;
+			c1 = ProjectionMath.TwoDimCoordsOnPlane(coords[0], plane);
+			c2 = ProjectionMath.TwoDimCoordsOnPlane(coords[1], plane);
+			c3 = ProjectionMath.TwoDimCoordsOnPlane(coords[2], plane);
+			c4 = ProjectionMath.TwoDimCoordsOnPlane(coords[3], plane);
 
 			IntPoint cip1 = IntPointFromVector(c1, precision);
 			IntPoint cip2 = IntPointFromVector(c2, precision);
