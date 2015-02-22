@@ -19,21 +19,21 @@ public class PerformanceMonitor : MonoBehaviour
 
 	#region Designer-configurable variables
 	[SerializeField]
-	private  float refreshFrequency = 0.5f;
+	private  float _refreshFrequency = 0.5f;
 	[SerializeField]
-	private int decimalPrecision = 1;
+	private int _decimalPrecision = 1;
 	#endregion
 
 	#region Classwide hidden variables
-	private float divisor = 10f; // Optimization of Mathf.Pow (10f, decimalPrecision)
-	private float accum = 0f; // FPS accumulated over the interval
-	private float msaccum = 0f; // ms accumulated over the interval
-	private int frames = 0; // Frames drawn over the interval
-	private Color fpsColor = Color.white; // Depends on the FPS ( R < 10, Y < 30, G >= 30 )
-	private Color spikeColor = Color.white;
-	private string fpsString = "";
-	private string spikeString = "";
-	private StringBuilder stringBuilder = new StringBuilder (10);
+	private float _divisor = 10f; // Optimization of Mathf.Pow (10f, _decimalPrecision)
+	private float _accum = 0f; // FPS accumulated over the interval
+	private float _msaccum = 0f; // ms accumulated over the interval
+	private int _frames = 0; // Frames drawn over the interval
+	private Color _fpsColor = Color.white; // Depends on the FPS ( R < 10, Y < 30, G >= 30 )
+	private Color _spikeColor = Color.white;
+	private string _fpsString = "";
+	private string _spikeString = "";
+	private StringBuilder _stringBuilder = new StringBuilder (10);
 	#endregion
 
 	#region Unity overrides
@@ -45,29 +45,29 @@ public class PerformanceMonitor : MonoBehaviour
 
 	void OnValidate ()
 	{
-		decimalPrecision = Mathf.Clamp (decimalPrecision, 0, 10);
-		divisor = Mathf.Pow (10f, decimalPrecision);
+		_decimalPrecision = Mathf.Clamp (_decimalPrecision, 0, 10);
+		_divisor = Mathf.Pow (10f, _decimalPrecision);
 	}
 
-	float last = 0f;
-	float curr = 0f;
-	float biggestSpike = 0f;
+	float _last = 0f;
+	float _curr = 0f;
+	float _biggestSpike = 0f;
 	void Update ()
 	{
-		curr = Time.deltaTime * 1000f;
-		biggestSpike = Mathf.Max (biggestSpike, Mathf.Abs (curr - last));
-		accum += Time.timeScale / Time.deltaTime;
-		msaccum += curr - last;
-		++frames;
-		last = curr;
+		_curr = Time.deltaTime * 1000f;
+		_biggestSpike = Mathf.Max (_biggestSpike, Mathf.Abs (_curr - _last));
+		_accum += Time.timeScale / Time.deltaTime;
+		_msaccum += _curr;
+		++_frames;
+		_last = _curr;
 	}
 
 	void OnGUI () // TODO: Think about moving this into a text mesh to avoid impacting performance as much (apparently, OnGUI is very slow)
 	{
-		GUI.color = fpsColor;
-		GUI.Label (new Rect (Screen.width - 125, Screen.height - 25, 125, 25), fpsString);
-		GUI.color = spikeColor;
-		GUI.Label (new Rect (Screen.width - 125, Screen.height - 45, 125, 25), spikeString);
+		GUI.color = _fpsColor;
+		GUI.Label (new Rect (Screen.width - 125, Screen.height - 25, 125, 25), _fpsString);
+		GUI.color = _spikeColor;
+		GUI.Label (new Rect (Screen.width - 125, Screen.height - 45, 125, 25), _spikeString);
 	}
 	#endregion
 
@@ -98,29 +98,30 @@ public class PerformanceMonitor : MonoBehaviour
 	private IEnumerator FPS ()
 	{
 		while (true) {
-			yield return new WaitForSeconds (refreshFrequency);
-			float fps = accum / frames;
-			float ms = msaccum / frames;
-			stringBuilder.Length = 0;
-			stringBuilder.Append ("ms: ");
-			stringBuilder.Append (Mathf.RoundToInt (msaccum));
-			stringBuilder.Append (" (");
-			stringBuilder.Append (Mathf.RoundToInt (fps * divisor) / divisor);
-			stringBuilder.Append (" FPS)");
-			fpsString = stringBuilder.ToString ();
+			yield return new WaitForSeconds (_refreshFrequency);
+			float fps = _accum / _frames;
+			float ms = _msaccum / _frames;
+			_stringBuilder.Length = 0;
+			_stringBuilder.Append ("ms: ");
+			_stringBuilder.Append (Mathf.RoundToInt(ms));
+			_stringBuilder.Append (" (");
+			_stringBuilder.Append (Mathf.RoundToInt (fps * _divisor) / _divisor);
+			_stringBuilder.Append (" FPS)");
+			_fpsString = _stringBuilder.ToString ();
 
-			stringBuilder.Length = 0;
-			stringBuilder.Append ("Spike (ms): ");
-			stringBuilder.Append (Mathf.RoundToInt (biggestSpike * divisor) / divisor);
-			spikeString = stringBuilder.ToString ();
+			_stringBuilder.Length = 0;
+			_stringBuilder.Append ("Spike (ms): ");
+			_stringBuilder.Append (Mathf.RoundToInt (_biggestSpike * _divisor) / _divisor);
+			_spikeString = _stringBuilder.ToString ();
 
-			fpsColor = (fps >= 30f) ? Color.green : ((fps > 10) ? Color.yellow : Color.red);
-			spikeColor = (biggestSpike <= 20f) ? Color.green : ((biggestSpike < 25f) ? Color.yellow : Color.red);
+			_fpsColor = (fps >= 30f) ? Color.green : ((fps > 10) ? Color.yellow : Color.red);
+			_spikeColor = (_biggestSpike <= 20f) ? Color.green : ((_biggestSpike < 25f) ? Color.yellow : Color.red);
 
-			accum = 0.0F;
-			frames = 0;
+			_accum = 0.0F;
+			_msaccum = 0.0f;
+			_frames = 0;
 
-			biggestSpike = 0f;
+			_biggestSpike = 0f;
 		}
 	}
 	#endregion

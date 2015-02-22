@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Projection;
 
 // NOTE(Julian): This class is really only intended for debugging purposes.
 // Proper visuals will have to be handled slightly differently
 
 public class GenerateWorldEntityVis : MonoBehaviour {
-
+	[SerializeField]
+	private Material _shadowMaterial;
 	private WorldEntity _worldEntity;
 	private Rotatable _rotatable;
 	private MovementMachine _movementMachine;
@@ -38,6 +40,9 @@ public class GenerateWorldEntityVis : MonoBehaviour {
 		graphicsContainer.name = "GeneratedVisuals";
 		_meshFilter = graphicsContainer.AddComponent<MeshFilter>();
 		_meshRenderer = graphicsContainer.AddComponent<MeshRenderer>();
+		ProjectShadow projectShadow = graphicsContainer.AddComponent<ProjectShadow>();
+		projectShadow.InitWithShadowMaterial(_shadowMaterial);
+
 		_meshTransform = graphicsContainer.transform;
 		_meshTransform.parent = transform;
 		_meshTransform.position = (_worldEntity.Location.ToVector3() + Vector3.one/2f) * WorldManager.g.TileSize;

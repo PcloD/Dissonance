@@ -7,14 +7,21 @@ using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
 
+	[SerializeField]
 	int _xDim = 40; // Right
+	[SerializeField]
 	int _zDim = 40; // Left
+	[SerializeField]
 	int _yDim = 40; // Up
 	[SerializeField]
 	float _tileSize = 0.5f;
 
 	public float TileSize {
 		get { return _tileSize; }
+	}
+
+	public IntVector WorldDims {
+		get { return new IntVector(_xDim, _yDim, _zDim); }
 	}
 
 	Dictionary<int, Dictionary<int, Dictionary<int, WorldEntity>>> _world =
@@ -30,6 +37,19 @@ public class WorldManager : MonoBehaviour {
 	void Awake () {
 		EnsureGExists();
 		InitLevel();
+	}
+
+
+	[SerializeField]
+	Plane[] _planes;
+	public Plane[] Planes {
+		get { return _planes; }
+	}
+
+	[SerializeField]
+	Transform _shadowContainer;
+	public Transform ShadowContainer {
+		get { return _shadowContainer; }
 	}
 
 	public void EnsureGExists () {
@@ -72,9 +92,9 @@ public class WorldManager : MonoBehaviour {
 	bool _initialized = false;
 	void InitLevel () {
 		// TODO(JULIAN): Load dimensions
-		int _xDim = 40; // Right
-		int _zDim = 40; // Left
-		int _yDim = 40; // Up
+		// _xDim = 40; // Right
+		// _zDim = 40; // Left
+		// _yDim = 40; // Up
 
 		// TODO(JULIAN): Load _world
 		// for (int y = 0; y < _yDim; y++) {
