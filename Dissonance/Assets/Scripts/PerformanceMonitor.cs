@@ -27,6 +27,7 @@ public class PerformanceMonitor : MonoBehaviour
 	#region Classwide hidden variables
 	private float divisor = 10f; // Optimization of Mathf.Pow (10f, decimalPrecision)
 	private float accum = 0f; // FPS accumulated over the interval
+	private float msaccum = 0f; // ms accumulated over the interval
 	private int frames = 0; // Frames drawn over the interval
 	private Color fpsColor = Color.white; // Depends on the FPS ( R < 10, Y < 30, G >= 30 )
 	private Color spikeColor = Color.white;
@@ -56,6 +57,7 @@ public class PerformanceMonitor : MonoBehaviour
 		curr = Time.deltaTime * 1000f;
 		biggestSpike = Mathf.Max (biggestSpike, Mathf.Abs (curr - last));
 		accum += Time.timeScale / Time.deltaTime;
+		msaccum += curr - last;
 		++frames;
 		last = curr;
 	}
@@ -98,9 +100,13 @@ public class PerformanceMonitor : MonoBehaviour
 		while (true) {
 			yield return new WaitForSeconds (refreshFrequency);
 			float fps = accum / frames;
+			float ms = msaccum / frames;
 			stringBuilder.Length = 0;
-			stringBuilder.Append ("FPS: ");
+			stringBuilder.Append ("ms: ");
+			stringBuilder.Append (Mathf.RoundToInt (msaccum));
+			stringBuilder.Append (" (");
 			stringBuilder.Append (Mathf.RoundToInt (fps * divisor) / divisor);
+			stringBuilder.Append (" FPS)");
 			fpsString = stringBuilder.ToString ();
 
 			stringBuilder.Length = 0;
