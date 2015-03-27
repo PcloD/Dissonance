@@ -126,6 +126,7 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
+	// NOTE(Julian): This is the frame bottleneck; optimization potential
 	private void UpdateShadows () {
 
 		if (_xyWorldShadows == null) _xyWorldShadows = new bool[_xDim,_yDim];
@@ -405,5 +406,16 @@ public class WorldManager : MonoBehaviour {
 		Profiler.BeginSample("Shadow Sim");
 		UpdateShadows();
 		Profiler.EndSample();
+	}
+
+	void Serialize () {
+		// This should be an intvector!
+		// xdim
+		// ydim
+		// zdim
+		// _tileSize
+		// private List<WorldEntity> _worldEntities = new List<WorldEntity>();
+		// private List<WorldEntity2D> _worldEntities2D = new List<WorldEntity2D>();
+
 	}
 }
