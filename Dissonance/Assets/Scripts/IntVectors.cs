@@ -94,7 +94,7 @@ public struct IntVector {
 }
 
 [System.Serializable]
-public struct IntVector2D {
+public struct IntVector2D : System.IEquatable<IntVector2D> {
 	public int x;
 	public int y;
 
@@ -106,10 +106,14 @@ public struct IntVector2D {
 		return x.GetHashCode() ^ y.GetHashCode();
 	}
 
+	public bool Equals( IntVector2D ob ){
+		return this == ob;
+	}
+
 	public override bool Equals( object ob ){
 		if( ob is IntVector2D ) {
-			IntVector2D other = (IntVector2D) ob;
-			return (other.x == x && other.y == y);
+			IntVector2D c = (IntVector2D) ob;
+			return (c.x == x && c.y == y);
 		}
 		else {
 			return false;

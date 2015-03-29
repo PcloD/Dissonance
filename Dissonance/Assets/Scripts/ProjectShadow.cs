@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,7 +9,7 @@ namespace Projection {
   using Paths = List<List<IntPoint>>;
 
 public class ProjectShadow : MonoBehaviour {
-	private Plane[] _planes;
+	private DPlane[] _planes;
 	private EdgeCollider2D[] _colliders;
 	private ShadowRenderer[] _shadowRenderers;
 	private Transform[] _colliderTransforms;
@@ -55,12 +55,12 @@ public class ProjectShadow : MonoBehaviour {
 		return worldPos;
 	}
 
-	private Vector3 ProjectVertIndexToPlane (int index, Plane plane) {
+	private Vector3 ProjectVertIndexToPlane (int index, DPlane plane) {
 		Vector3 vert = _mesh.vertices[index];
 		return ProjectionMath.ProjectPointToPlane(VertexPosToWorldPos(vert), plane);
 	}
 
-	Path PathFromVerts(Vector3 v1, Vector3 v2, Vector3 v3, Plane plane, float precision) {
+	Path PathFromVerts(Vector3 v1, Vector3 v2, Vector3 v3, DPlane plane, float precision) {
 		Path p = new Path(3);
 		v1 = ProjectionMath.TwoDimCoordsOnPlane(v1, plane);
 		v2 = ProjectionMath.TwoDimCoordsOnPlane(v2, plane);
@@ -84,12 +84,12 @@ public class ProjectShadow : MonoBehaviour {
 		return new IntPoint((int)v.x, (int)v.y);
 	}
 
-	Vector3 Vector3FromIntPoint(IntPoint ip, Plane plane, float precision) {
+	Vector3 Vector3FromIntPoint(IntPoint ip, DPlane plane, float precision) {
 		Vector2 v = new Vector2(ip.X,ip.Y)/precision;
 		return ProjectionMath.ThreeDimCoordsOnPlane(v, plane);
 	}
 
-	Vector3 Vector2FromIntPoint(IntPoint ip, Plane plane, float precision) {
+	Vector3 Vector2FromIntPoint(IntPoint ip, DPlane plane, float precision) {
 		return new Vector2(ip.X,ip.Y)/precision;
 	}
 
@@ -106,7 +106,7 @@ public class ProjectShadow : MonoBehaviour {
 
 			Vector3[] projectedVertices3d = new Vector3[vertexCount];
 
-			Plane plane = _planes[planeIndex];
+			DPlane plane = _planes[planeIndex];
 			for (int unprojectedVertIndex = 0; unprojectedVertIndex < vertexCount; unprojectedVertIndex++) {
 				Vector3 projected3d = ProjectVertIndexToPlane(unprojectedVertIndex, plane);
 				projectedVertices3d[unprojectedVertIndex] = projected3d;

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 // TODO(Julian): Centralize the entity simulation; make all entities register with the world on enable
 // and simulate when the world wills it
@@ -39,15 +40,23 @@ public class WorldManager : MonoBehaviour {
 		InitLevel();
 	}
 
-
 	[SerializeField]
-	Plane[] _planes;
-	public Plane[] Planes {
+	DPlane _planeXY;
+	public DPlane PlaneXY {
+		get { return _planeXY; }
+	}
+	[SerializeField]
+	DPlane _planeZY;
+	public DPlane PlaneZY {
+		get { return _planeZY; }
+	}
+	DPlane[] _planes;
+	public DPlane[] Planes {
 		get { return _planes; }
 	}
 
 	void OnValidate () {
- 		UpdatePlanes();
+		UpdatePlanes();
 	}
 
 	[SerializeField]
@@ -121,9 +130,13 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	private void UpdatePlanes () {
-		for (int i = 0; i < _planes.Length; i++) {
-			_planes[i].Init(_xDim, _yDim, _zDim);
+		if (_planes == null) {
+			_planes = new DPlane[2];
 		}
+		_planeXY.Init(_xDim, _yDim, _zDim);
+		_planeZY.Init(_xDim, _yDim, _zDim);
+		_planes[0] = _planeXY;
+		_planes[1] = _planeZY;
 	}
 
 	// NOTE(Julian): This is the frame bottleneck; optimization potential
@@ -220,6 +233,21 @@ public class WorldManager : MonoBehaviour {
 	bool PassableAtZY(int z, int y) {
 		if (z >= _zDim || y >= _yDim || z < 0 || y < 0) { return false; }
 		return _zyWorldShadows[z,y];
+	}
+
+	bool PassableAt2D (int a, int y, PlaneOrientation orientation) {
+		switch (orientation) {
+			case PlaneOrientation.XY:
+				return PassableAtXY(a, y);
+			case PlaneOrientation.ZY:
+				return PassableAtZY(a, y);
+			default:
+				return false;
+		}
+	}
+
+	bool PassableAt2D (IntVector2D v, PlaneOrientation orientation) {
+		return PassableAt2D(v[0], v[1], orientation);
 	}
 
 	bool CastsShadowsAt3D(int x, int y, int z) {
@@ -369,6 +397,162 @@ public class WorldManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+
+	float HeuristicCostEstimate (IntVector2D startNode, IntVector2D goalNode) {
+		return Vector2.Distance(startNode.ToVector2(), goalNode.ToVector2());
+		// return Mathf.Abs(startNode.x - goalNode.x) + Mathf.Abs(startNode.y - goalNode.y);
+	}
+
+	private float CostBetween (IntVector2D startNode, IntVector2D neighborNode) {
+		return Mathf.Abs(startNode.x - neighborNode.x) + Mathf.Abs(startNode.y - neighborNode.y);
+	}
+
+	private List<IntVector2D> ConnectedNodes (IntVector2D node, PlaneOrientation orientation) {
+		var connected = new List<IntVector2D>();
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				bool shouldAdd = true;
+				shouldAdd = shouldAdd && (Mathf.Abs(i) + Mathf.Abs(j) == 1);
+				if (!shouldAdd) { continue; }
+				int testA = node[0] + i;
+				int testY = node.y + j;
+				shouldAdd = shouldAdd && IsInBounds2D(testA, testY, orientation);
+				shouldAdd = shouldAdd && PassableAt2D(testA, testY, orientation);
+				if (!shouldAdd) { continue; }
+				// TODO(JULIAN): Test if valid connection!
+				connected.Add(new IntVector2D(testA, testY));
+			}
+		}
+		return connected;
+	}
+
+	public IntVector2D CoerceToBounds2D (IntVector2D vec, PlaneOrientation orientation) {
+		IntVector2D res = vec;
+		res.y = Mathf.Min(Mathf.Max(0, res.y), _yDim - 1);
+		switch (orientation) {
+			case PlaneOrientation.XY:
+				res.x = Mathf.Min(Mathf.Max(0, res.x), _xDim - 1);
+				break;
+			case PlaneOrientation.ZY:
+				res[0] = Mathf.Min(Mathf.Max(0, res[0]), _zDim - 1);
+				break;
+			default:
+				break;
+		}
+		return res;
+	}
+
+	public bool IsInBounds2D (int a, int y, PlaneOrientation orientation) {
+		if (y >= _yDim || y < 0) { return false; }
+		switch (orientation) {
+			case PlaneOrientation.XY:
+				if (a >= _xDim || a < 0) { return false; }
+				break;
+			case PlaneOrientation.ZY:
+				if (a >= _zDim || a < 0) { return false; }
+				break;
+			default:
+				break;
+		}
+		return true;
+	}
+
+	public bool IsInBounds2D (IntVector2D vec, PlaneOrientation orientation) {
+		return IsInBounds2D(vec[0], vec.y, orientation);
+	}
+
+	public List<IntVector2D> PlanPathXY (IntVector2D startNode, IntVector2D goalNode) {
+		return PlanPath(startNode, goalNode, PlaneOrientation.XY);
+	}
+
+	public List<IntVector2D> PlanPathZY (IntVector2D startNode, IntVector2D goalNode) {
+		return PlanPath(startNode, goalNode, PlaneOrientation.ZY);
+	}
+
+	// Adapted From http://stackoverflow.com/questions/10983110/a-star-a-and-generic-find-method
+	private class Path<Node> : IEnumerable<Node> {
+		public Node LastStep { get; private set; }
+
+		public Path<Node> PreviousSteps { get; private set; }
+
+		public float TotalCost { get; private set; }
+
+		private Path(Node lastStep, Path<Node> previousSteps, float totalCost) {
+			LastStep = lastStep;
+			PreviousSteps = previousSteps;
+			TotalCost = totalCost;
+		}
+
+		public Path(Node start) : this(start, null, 0) { }
+		public Path<Node> AddStep(Node step, float stepCost) {
+			return new Path<Node>(step, this, TotalCost + stepCost);
+		}
+
+		public IEnumerator<Node> GetEnumerator() {
+			for (Path<Node> p = this; p != null; p = p.PreviousSteps)
+				yield return p.LastStep;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return this.GetEnumerator();
+		}
+
+		public List<Node> AsList {
+			get {
+				List<Node> nodes = new List<Node>();
+				foreach (Node n in this) {
+					nodes.Add(n);
+				}
+				return nodes;
+			}
+		}
+	}
+
+	// Adapted From http://stackoverflow.com/questions/10983110/a-star-a-and-generic-find-method
+	public List<IntVector2D> PlanPath (IntVector2D start, IntVector2D destination, PlaneOrientation orientation) {
+		var closed = new HashSet<IntVector2D>();
+		var queue = new PriorityQueue<Path<IntVector2D>, float>();
+		queue.Enqueue(new Path<IntVector2D>(start), 0f);
+		while(!queue.IsEmpty) {
+			var path = queue.Dequeue();
+			if (closed.Contains(path.LastStep)) continue;
+			if (path.LastStep == destination) return path.AsList;
+			IntVector2D leafNode = path.LastStep;
+			closed.Add(leafNode);
+			List<IntVector2D> neighbors = ConnectedNodes(leafNode, orientation);
+			for (int i = 0; i < neighbors.Count; i++) {
+				IntVector2D n = neighbors[i];
+				float stepCost = CostBetween(path.LastStep, n);
+				var newPath = path.AddStep(n, stepCost);
+				queue.Enqueue(newPath, newPath.TotalCost + HeuristicCostEstimate(n, destination));
+			}
+		}
+		return null;
+	}
+
+	private IntVector2D MouseLocOnPlane (DPlane plane) {
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		float rayDistance;
+		if (plane.MathPlane.Raycast(ray, out rayDistance)) {
+			Vector3 planePos = ray.GetPoint(rayDistance);
+			Vector2 planePos2D = ProjectionMath.TwoDimCoordsOnPlane(planePos, plane);
+			IntVector2D tileLoc = new IntVector2D(planePos2D/_tileSize - Vector2.one * _tileSize/2f);
+			if (plane.Orientation == PlaneOrientation.XY) {
+				tileLoc.x *= -1;
+			}
+			return tileLoc;
+		}
+		return new IntVector2D(-1,-1);
+	}
+
+	public IntVector2D MouseLocOnPlaneXY () {
+		return MouseLocOnPlane(_planeXY);
+	}
+
+	public IntVector2D MouseLocOnPlaneZY () {
+		return MouseLocOnPlane(_planeZY);
 	}
 
 	void Update () {

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -30,7 +30,7 @@ public class ShadowRenderer : MonoBehaviour {
     Vector3[] _vertices;
     Vector3[] _normals;
     Vector2[] _uvs;
-	public void SetVerts(List<Vector2> vertices2D, Plane plane) {
+	public void SetVerts(List<Vector2> vertices2D, DPlane plane) {
         transform.rotation = Quaternion.identity;
 		List<Vector2> toTriangulate = new List<Vector2>();
         HashSet<Vector2> duplicates = new HashSet<Vector2>();
