@@ -523,7 +523,6 @@ public class WorldManager : MonoBehaviour {
 				foreach (Node n in this) {
 					nodes.Add(n);
 				}
-				nodes.Reverse();
 				return nodes;
 			}
 		}
@@ -562,6 +561,7 @@ public class WorldManager : MonoBehaviour {
 			IntVector2D tileLoc = new IntVector2D(planePos2D/_tileSize - Vector2.one * _tileSize/2f);
 			if (plane.Orientation == PlaneOrientation.XY) {
 				tileLoc.x *= -1;
+				tileLoc.x -= 1;
 			}
 			return tileLoc;
 		}
@@ -574,6 +574,28 @@ public class WorldManager : MonoBehaviour {
 
 	public IntVector2D MouseLocOnPlaneZY () {
 		return MouseLocOnPlane(_planeZY);
+	}
+
+	public Vector3 WorldPosFromIntVecXY (IntVector2D vec) {
+		return WorldPosFromIntVec(vec, PlaneOrientation.XY);
+	}
+
+	public Vector3 WorldPosFromIntVecZY (IntVector2D vec) {
+		return WorldPosFromIntVec(vec, PlaneOrientation.ZY);
+	}
+
+	public Vector3 WorldPosFromIntVec (IntVector2D vec, PlaneOrientation orientation) {
+		float tileSize = WorldManager.g.TileSize;
+		Vector2 vector2 = vec.ToVector2();
+		if (orientation == PlaneOrientation.XY) {
+			vector2.x *= -1f;
+			vector2.x -= 1f;
+		}
+		if (orientation == PlaneOrientation.XY) {
+			return ProjectionMath.ThreeDimCoordsOnPlane(vector2 * tileSize + Vector2.one * tileSize/2f, _planeXY);
+		} else {
+			return ProjectionMath.ThreeDimCoordsOnPlane(vector2 * tileSize + Vector2.one * tileSize/2f, _planeZY);
+		}
 	}
 
 	void Update () {

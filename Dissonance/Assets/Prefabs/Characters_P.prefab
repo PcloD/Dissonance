@@ -276,9 +276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc603359029b4510aedab9f34a19b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _avatars2D:
-  - {fileID: 11466050}
-  - {fileID: 11466048}
+  _avatarXY: {fileID: 11466050}
+  _avatarZY: {fileID: 11466048}
   _avatar3d: {fileID: 11440076}
 --- !u!114 &11440076
 MonoBehaviour:

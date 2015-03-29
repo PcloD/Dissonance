@@ -31,10 +31,16 @@ public class Char2D : MonoBehaviour {
 		get { return _currStateInfo; }
 	}
 
-	Vector2 _desiredInput;
-	public Vector2 DesiredInput {
-		get { return _desiredInput; }
-		set { _desiredInput = value; }
+	// Vector2 _desiredInput;
+	// public Vector2 DesiredInput {
+	// 	get { return _desiredInput; }
+	// 	set { _desiredInput = value; }
+	// }
+
+	List<IntVector2D> _desiredPath = new List<IntVector2D>();
+	public List<IntVector2D> DesiredPath {
+		get { return _desiredPath; }
+		set { _desiredPath = value; }
 	}
 
 	[SerializeField]
@@ -83,37 +89,70 @@ public class Char2D : MonoBehaviour {
 		_currStateInfo.lastLoc = Location;
 	}
 
+	IntVector2D currPathSeg = new IntVector2D();
 	void Simulate () {
 		StateInformation eState = _currStateInfo;
 
 		if (eState.state == State.Idle) {
-			IntVector2D delta = new IntVector2D(0,-1);
-			if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
-				if (eState.state != State.Falling) {
+			if (_desiredPath.Count > 0) {
+				currPathSeg = _desiredPath[_desiredPath.Count - 1];
+				_desiredPath.RemoveAt(_desiredPath.Count - 1);
+
+				if (currPathSeg.y - Location.y < 0) {
 					Fall();
 				}
-			} else if (eState.state == State.Falling) {
-				Land();
-			} else if (_desiredInput.x > 0f) {
-				delta = new IntVector2D(1,0);
-				IntVector2D jumpDelta = new IntVector2D(1,1);
-				if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
-					WalkInDirBy(FacingDir.Right, delta);
-				} else if (WorldManager.g.CanJumpByDelta(_worldEntity, jumpDelta)) {
-					JumpInDirBy(FacingDir.Right, jumpDelta);
+
+				if (currPathSeg.x - Location.x > 0) {
+					MoveInDirTo(FacingDir.Right, currPathSeg);
+				} else if (currPathSeg.x - Location.x < 0) {
+					MoveInDirTo(FacingDir.Left, currPathSeg);
 				}
-			} else if (_desiredInput.x < 0f) {
-				delta = new IntVector2D(-1,0);
-				IntVector2D jumpDelta = new IntVector2D(-1,1);
+			} else {
+				IntVector2D delta = new IntVector2D(0,-1);
 				if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
-					WalkInDirBy(FacingDir.Left, delta);
-				} else if (WorldManager.g.CanJumpByDelta(_worldEntity, jumpDelta)) {
-					JumpInDirBy(FacingDir.Left, jumpDelta);
+					if (eState.state != State.Falling) {
+						Fall();
+					}
 				}
 			}
 		}
+
+		// if (eState.state == State.Idle) {
+		// 	IntVector2D delta = new IntVector2D(0,-1);
+		// 	if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
+		// 		if (eState.state != State.Falling) {
+		// 			Fall();
+		// 		}
+		// 	} else if (eState.state == State.Falling) {
+		// 		Land();
+		// 	} else if (_desiredInput.x > 0f) {
+		// 		delta = new IntVector2D(1,0);
+		// 		IntVector2D jumpDelta = new IntVector2D(1,1);
+		// 		if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
+		// 			WalkInDirBy(FacingDir.Right, delta);
+		// 		} else if (WorldManager.g.CanJumpByDelta(_worldEntity, jumpDelta)) {
+		// 			JumpInDirBy(FacingDir.Right, jumpDelta);
+		// 		}
+		// 	} else if (_desiredInput.x < 0f) {
+		// 		delta = new IntVector2D(-1,0);
+		// 		IntVector2D jumpDelta = new IntVector2D(-1,1);
+		// 		if (WorldManager.g.CanMoveByDelta(_worldEntity, delta)) {
+		// 			WalkInDirBy(FacingDir.Left, delta);
+		// 		} else if (WorldManager.g.CanJumpByDelta(_worldEntity, jumpDelta)) {
+		// 			JumpInDirBy(FacingDir.Left, jumpDelta);
+		// 		}
+		// 	}
+		// }
 	}
 
+
+	private void MoveInDirTo (FacingDir dir, IntVector2D dest) {
+		_currStateInfo.lastLoc = Location;
+		Location = dest;
+		_currStateInfo.state = State.Walking;
+		_currStateInfo.facingDirection = dir;
+		_currStateInfo.fractionComplete = 0f;
+	}
 
 	private void WalkInDirBy (FacingDir dir, IntVector2D deltaLoc) {
 		_currStateInfo.lastLoc = Location;
