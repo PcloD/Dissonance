@@ -685,6 +685,9 @@ MonoBehaviour:
   - x: 2
     y: 0
     z: 0
+  - x: 0
+    y: 1
+    z: 0
 --- !u!4 &1306644728
 Transform:
   m_ObjectHideFlags: 0
@@ -906,7 +909,7 @@ Prefab:
     - target: {fileID: 2300000, guid: 4b224f4a220dc42b59e00a7b0fcca204, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 2f46f4e2d8efb42c481954a6bca15a99, type: 2}
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 4b224f4a220dc42b59e00a7b0fcca204, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: 4b224f4a220dc42b59e00a7b0fcca204, type: 3}
