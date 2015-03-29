@@ -171,8 +171,24 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
+	private bool CanExistOn (List<IntVector2D> relativeLocations, IntVector2D on, PlaneOrientation orientation) {
+		int i;
+		switch (orientation) {
+			case PlaneOrientation.XY:
+				for (i = 0; i < relativeLocations.Count; i++) {
+					if (!PassableAtXY(relativeLocations[i] + on)) { return false; }
+				}
+			break;
+			case PlaneOrientation.ZY:
+				for (i = 0; i < relativeLocations.Count; i++) {
+					if (!PassableAtZY(relativeLocations[i] + on)) { return false; }
+				}
+			break;
+		}
+		return true;
+	}
 
-	public bool CanMoveByDelta(WorldEntity2D e, IntVector2D v) {
+	public bool CanMoveByDelta (WorldEntity2D e, IntVector2D v) {
 		IntVector2D resLoc = e.Location + v;
 		List<IntVector2D> occupiedAfter = e.AbsoluteLocations(resLoc);
 
@@ -217,20 +233,20 @@ public class WorldManager : MonoBehaviour {
 		return true;
 	}
 
-	bool PassableAtXY(IntVector2D v) {
+	bool PassableAtXY (IntVector2D v) {
 		return PassableAtXY(v[0], v[1]);
 	}
 
-	bool PassableAtXY(int x, int y) {
+	bool PassableAtXY (int x, int y) {
 		if (x >= _xDim || y >= _yDim || x < 0 || y < 0) { return false; }
 		return _xyWorldShadows[x,y];
 	}
 
-	bool PassableAtZY(IntVector2D v) {
+	bool PassableAtZY (IntVector2D v) {
 		return PassableAtZY(v[0], v[1]);
 	}
 
-	bool PassableAtZY(int z, int y) {
+	bool PassableAtZY (int z, int y) {
 		if (z >= _zDim || y >= _yDim || z < 0 || y < 0) { return false; }
 		return _zyWorldShadows[z,y];
 	}
@@ -250,7 +266,7 @@ public class WorldManager : MonoBehaviour {
 		return PassableAt2D(v[0], v[1], orientation);
 	}
 
-	bool CastsShadowsAt3D(int x, int y, int z) {
+	bool CastsShadowsAt3D (int x, int y, int z) {
 		if (x < 0 || y < 0 || z < 0 ||
 			x >= _xDim || y >= _yDim || z >= _zDim) {
 			return false;
@@ -409,22 +425,32 @@ public class WorldManager : MonoBehaviour {
 		return Mathf.Abs(startNode.x - neighborNode.x) + Mathf.Abs(startNode.y - neighborNode.y);
 	}
 
-	private List<IntVector2D> ConnectedNodes (IntVector2D node, PlaneOrientation orientation) {
+	private List<IntVector2D> ConnectedNodesForRelativeLocations (List<IntVector2D> relativeLocations, IntVector2D node, PlaneOrientation orientation) {
 		var connected = new List<IntVector2D>();
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				bool shouldAdd = true;
-				shouldAdd = shouldAdd && (Mathf.Abs(i) + Mathf.Abs(j) == 1);
-				if (!shouldAdd) { continue; }
-				int testA = node[0] + i;
-				int testY = node.y + j;
-				shouldAdd = shouldAdd && IsInBounds2D(testA, testY, orientation);
-				shouldAdd = shouldAdd && PassableAt2D(testA, testY, orientation);
-				if (!shouldAdd) { continue; }
-				// TODO(JULIAN): Test if valid connection!
-				connected.Add(new IntVector2D(testA, testY));
+		IntVector2D below = node + new IntVector2D(0, -1);
+		if (IsInBounds2D(below.x, below.y, orientation) &&
+			CanExistOn(relativeLocations, below, orientation)) {
+			connected.Add(below);
+			return connected; // Enforce falling if possible
+		}
+
+		// Move left and right
+		for (int i = -1; i <= 1; i+=2) {
+			int horizPos = node[0] + i;
+			IntVector2D dest = new IntVector2D(horizPos, node.y);
+			if (IsInBounds2D(horizPos, node.y, orientation) &&
+				CanExistOn(relativeLocations, dest, orientation)) {
+				connected.Add(dest);
+			} else { // Move step up
+				int vertPos = node[1] + 1;
+				dest = new IntVector2D(horizPos, vertPos);
+				if (IsInBounds2D(horizPos, node.y, orientation) &&
+					CanExistOn(relativeLocations, dest, orientation)) {
+					connected.Add(dest);
+				}
 			}
 		}
+
 		return connected;
 	}
 
@@ -463,14 +489,6 @@ public class WorldManager : MonoBehaviour {
 		return IsInBounds2D(vec[0], vec.y, orientation);
 	}
 
-	public List<IntVector2D> PlanPathXY (IntVector2D startNode, IntVector2D goalNode) {
-		return PlanPath(startNode, goalNode, PlaneOrientation.XY);
-	}
-
-	public List<IntVector2D> PlanPathZY (IntVector2D startNode, IntVector2D goalNode) {
-		return PlanPath(startNode, goalNode, PlaneOrientation.ZY);
-	}
-
 	// Adapted From http://stackoverflow.com/questions/10983110/a-star-a-and-generic-find-method
 	private class Path<Node> : IEnumerable<Node> {
 		public Node LastStep { get; private set; }
@@ -505,13 +523,16 @@ public class WorldManager : MonoBehaviour {
 				foreach (Node n in this) {
 					nodes.Add(n);
 				}
+				nodes.Reverse();
 				return nodes;
 			}
 		}
 	}
 
 	// Adapted From http://stackoverflow.com/questions/10983110/a-star-a-and-generic-find-method
-	public List<IntVector2D> PlanPath (IntVector2D start, IntVector2D destination, PlaneOrientation orientation) {
+	public List<IntVector2D> PlanPath (Char2D entity, IntVector2D start, IntVector2D destination) {
+		PlaneOrientation orientation = entity.Orientation;
+		List<IntVector2D> relativeLocations = entity.AbsoluteLocations(new IntVector2D(0,0));
 		var closed = new HashSet<IntVector2D>();
 		var queue = new PriorityQueue<Path<IntVector2D>, float>();
 		queue.Enqueue(new Path<IntVector2D>(start), 0f);
@@ -521,7 +542,7 @@ public class WorldManager : MonoBehaviour {
 			if (path.LastStep == destination) return path.AsList;
 			IntVector2D leafNode = path.LastStep;
 			closed.Add(leafNode);
-			List<IntVector2D> neighbors = ConnectedNodes(leafNode, orientation);
+			List<IntVector2D> neighbors = ConnectedNodesForRelativeLocations(relativeLocations, leafNode, orientation);
 			for (int i = 0; i < neighbors.Count; i++) {
 				IntVector2D n = neighbors[i];
 				float stepCost = CostBetween(path.LastStep, n);

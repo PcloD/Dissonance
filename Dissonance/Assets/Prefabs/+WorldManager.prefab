@@ -199,12 +199,6 @@ MonoBehaviour:
   _planeXY: {fileID: 11476148}
   _planeZY: {fileID: 11476146}
   _shadowContainer: {fileID: 418948}
-  _debugObj:
-  - {fileID: 0}
-  - {fileID: 0}
-  _debugObj2:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &11476146
 MonoBehaviour:
   m_ObjectHideFlags: 1

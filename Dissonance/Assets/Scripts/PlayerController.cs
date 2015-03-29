@@ -55,10 +55,13 @@ public class PlayerController : MonoBehaviour {
 			Gizmos.color = Color.blue;
 			Gizmos.DrawSphere(GetWorldPosFromIntVec(goalPos, PlaneOrientation.XY), 0.5f);
 			Gizmos.color = Color.green;
-			IntVector2D lastLoc = _avatars2D[0].Location;
+			Char2D xyEntity = _avatars2D[0];
+			IntVector2D lastLoc = xyEntity.Location;
 			Gizmos.DrawSphere(GetWorldPosFromIntVec(lastLoc, PlaneOrientation.XY), 0.5f);
 			// Debug.Log("MOUSE: "+goalPos + " -> " + lastLoc);
-			List<IntVector2D> list = WorldManager.g.PlanPathXY(goalPos, lastLoc);
+
+			// List<IntVector2D> list = WorldManager.g.PlanPathXY(goalPos, lastLoc);
+			List<IntVector2D> list = WorldManager.g.PlanPath(xyEntity, lastLoc, goalPos);
 			if (list != null) {
 				for (int i = 0; i < list.Count; i++) {
 					IntVector2D nextLoc = list[i];
@@ -77,10 +80,12 @@ public class PlayerController : MonoBehaviour {
 			Gizmos.color = Color.blue;
 			Gizmos.DrawSphere(GetWorldPosFromIntVec(goalPos, PlaneOrientation.ZY), 0.5f);
 			Gizmos.color = Color.green;
-			IntVector2D lastLoc = _avatars2D[0].Location;
+			Char2D zyEntity = _avatars2D[1];
+			IntVector2D lastLoc = zyEntity.Location;
 			Gizmos.DrawSphere(GetWorldPosFromIntVec(lastLoc, PlaneOrientation.ZY), 0.5f);
 			// Debug.Log("MOUSE: "+goalPos + " -> " + lastLoc);
-			List<IntVector2D> list = WorldManager.g.PlanPathZY(goalPos, lastLoc);
+			// List<IntVector2D> list = WorldManager.g.PlanPathZY(goalPos, lastLoc);
+			List<IntVector2D> list = WorldManager.g.PlanPath(zyEntity, lastLoc, goalPos);
 			if (list != null) {
 				for (int i = 0; i < list.Count; i++) {
 					IntVector2D nextLoc = list[i];
