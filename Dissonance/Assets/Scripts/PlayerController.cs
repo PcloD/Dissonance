@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 					_avatarXY.DesiredPath = list;
 				}
 			} else {
-				Debug.Log("NO VALID XY PATH!");
+				// Debug.Log("NO VALID XY PATH!");
 			}
 		}
 
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour {
 					_avatarZY.DesiredPath = list;
 				}
 			} else {
-				Debug.Log("NO VALID ZY PATH!");
+				// Debug.Log("NO VALID ZY PATH!");
 			}
 		}
 
