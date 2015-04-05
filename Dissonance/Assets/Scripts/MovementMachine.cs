@@ -15,8 +15,15 @@ public struct MovementMachineStateInformation {
 	[HideInInspector]
 	public float fractionComplete; // Range from 0-1, inclusive
 	[HideInInspector]
-	public int movementDelta;
-	public Axis movementAxis; // 0, 1, 2
+	public int movementDeltaX;
+	[HideInInspector]
+	public int movementDeltaY;
+	[HideInInspector]
+	public int movementDeltaZ;
+	//public Axis movementAxis; // 0, 1, 2
+	public bool axisX;
+	public bool axisY;
+	public bool axisZ;
 }
 
 public class MovementMachine : MonoBehaviour, IControllableMachine {
@@ -30,7 +37,9 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 	public MovementMachineStateInformation StateInfo {
 		get { return _currStateInfo; }
 	}
-
+	public int singleMovementDistX=1;
+	public int singleMovementDistY=1;
+	public int singleMovementDistZ=1;
 	public bool IsCached {
 		get {
 			return _worldEntity != null;
@@ -48,7 +57,9 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 	void Start () {
 		_currStateInfo.lastLocation = _worldEntity.Location;
 		_currStateInfo.fractionComplete = 0f;
-		_currStateInfo.movementDelta = 0;
+		_currStateInfo.movementDeltaX = 0;
+		_currStateInfo.movementDeltaY = 0;
+		_currStateInfo.movementDeltaZ = 0;
 		// movementAxis should be user-defined
 	}
 
@@ -69,10 +80,14 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 	private void InitMoving () {
 		switch (_rotationController.StateInfo.state) {
 			case RotationState.RotatingCounterClockwise:
-				_currStateInfo.movementDelta = 1;
+				_currStateInfo.movementDeltaX = singleMovementDistX;
+				_currStateInfo.movementDeltaY = singleMovementDistY;
+				_currStateInfo.movementDeltaZ = singleMovementDistZ;
 				break;
 			case RotationState.RotatingClockwise:
-				_currStateInfo.movementDelta = -1;
+				_currStateInfo.movementDeltaX = -singleMovementDistX;
+				_currStateInfo.movementDeltaY = -singleMovementDistY;
+				_currStateInfo.movementDeltaZ = -singleMovementDistZ;
 				break;
 			default:
 				break;
@@ -89,13 +104,24 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 	}
 
 	private void Simulate () {
-		if (_currStateInfo.movementDelta != 0) {
+		if (_currStateInfo.movementDeltaX!=0 || _currStateInfo.movementDeltaY!=0 || _currStateInfo.movementDeltaZ!=0) {
 			_currStateInfo.lastLocation = _worldEntity.Location;
 			IntVector delta = new IntVector();
-			delta[(int)_currStateInfo.movementAxis] = _currStateInfo.movementDelta;
+		//	delta[(int)_currStateInfo.movementAxis] = _currStateInfo.movementDelta;
+			if(_currStateInfo.axisX){
+				delta[0]= _currStateInfo.movementDeltaX;
+			}
+			if(_currStateInfo.axisY){
+				delta[1]= _currStateInfo.movementDeltaY;
+			}
+			if(_currStateInfo.axisZ){
+				delta[2]= _currStateInfo.movementDeltaZ;
+			}
 			_worldEntity.Location = _worldEntity.Location + delta;
 			// TODO(Julian): Prevent movement if not possible!
-			_currStateInfo.movementDelta = 0;
+			_currStateInfo.movementDeltaX = 0;
+			_currStateInfo.movementDeltaY = 0;
+			_currStateInfo.movementDeltaZ = 0;
 		}
 	}
 
