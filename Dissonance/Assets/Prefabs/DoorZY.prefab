@@ -84,8 +84,8 @@ MonoBehaviour:
   - x: 1
     y: 2
   _loc:
-    x: 2
-    y: 6
+    x: 4
+    y: 7
 --- !u!114 &11482134
 MonoBehaviour:
   m_ObjectHideFlags: 1
