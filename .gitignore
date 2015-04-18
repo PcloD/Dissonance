@@ -10,9 +10,9 @@
 #Unity3D Generated File On Crash Reports
 sysinfo.txt
 
-# ===================================== #
-# Visual Studio / MonoDevelop generated #
-# ===================================== #
+# ============================== #
+# Editor / MonoDevelop generated #
+# ============================== #
 ExportedObj/
 *.svd
 *.userprefs
@@ -23,6 +23,8 @@ ExportedObj/
 *.user
 *.unityproj
 *.booproj
+*.sublime-project
+*.sublime-workspace
 
 # ============ #
 # OS generated #
