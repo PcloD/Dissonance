@@ -188,12 +188,14 @@ public class Rotatable : MonoBehaviour {
 	void OnDrawGizmos () {
 		Cache();
 		for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
-			var v = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			var o = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			var v = o;
+			var w = v;
 			v *= WorldManager.g.TileSize;
-			var w = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
 			w *= WorldManager.g.TileSize;
-			v.y += 100f;
-			w.y -= 100f;
+			v.y += 1f;
+			w.y -= 1f;
+			Gizmos.DrawCube(o, Vector3.one * 0.5f * WorldManager.g.TileSize);
 			Gizmos.DrawLine(v,w);
 		}
 	}
