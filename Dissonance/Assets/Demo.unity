@@ -293,16 +293,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors:
+  - {x: .5, y: 1, z: .5}
 --- !u!114 &355996352
 MonoBehaviour:
   m_ObjectHideFlags: 0

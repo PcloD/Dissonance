@@ -641,7 +641,7 @@ public class WorldManager : MonoBehaviour {
                     Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y + 1f), 0f),
                         new Vector3(_tileSize * (x + 1f), _tileSize * (y), 0f));
                 }
-                if (_xyWorldEntities[x, y] != null) {
+                if (_xyWorldEntities[x, y] != null && _xyWorldEntities[x, y].Count > 0) {
                     Gizmos.color = Color.green;
                     Gizmos.DrawLine(new Vector3(_tileSize * (x), _tileSize * (y), 0f),
                         new Vector3(_tileSize * (x + 1f), _tileSize * (y + 1f), 0f));
@@ -659,7 +659,7 @@ public class WorldManager : MonoBehaviour {
                     Gizmos.DrawLine(new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z)),
                         new Vector3(0f, _tileSize * (y), _tileSize * (z + 1f)));
                 }
-                if (_zyWorldEntities[z, y] != null) {
+                if (_zyWorldEntities[z, y] != null && _zyWorldEntities[z, y].Count > 0) {
                     Gizmos.color = Color.green;
                     Gizmos.DrawLine(new Vector3(0f, _tileSize * (y), _tileSize * (z)),
                         new Vector3(0f, _tileSize * (y + 1f), _tileSize * (z + 1f)));

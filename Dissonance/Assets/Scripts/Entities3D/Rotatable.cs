@@ -30,11 +30,13 @@ public class Rotatable : MonoBehaviour {
 
 	private WorldEntity _worldEntity;
 
-	[SerializeField]
 	RotationStateInformation _currStateInfo;
 	public RotationStateInformation StateInfo {
 		get { return _currStateInfo; }
 	}
+
+	[SerializeField]
+	List<Vector3> _explicitRelativeRotationAnchors;
 
 	public delegate void RotationBeganDelegates();
     public RotationBeganDelegates RotationHook;
@@ -76,14 +78,36 @@ public class Rotatable : MonoBehaviour {
 		_currStateInfo.lastLocation = _worldEntity.Location;
 	}
 
+	private bool CanRotateAroundAnchor (Vector3 worldAnchor, int axis) {
+		if (_explicitRelativeRotationAnchors.Count > 0) {
+			Vector3 offset = (worldAnchor - _worldEntity.Location.ToVector3() * WorldManager.g.TileSize);
+			offset[axis] = 0f;
+			for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
+				var currVec = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i]);
+				currVec[axis] = 0f;
+				if ((currVec-offset).magnitude < 0.01f) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+
+	public bool CanYRotateAroundAnchor (Vector3 worldAnchor) {
+		return CanRotateAroundAnchor (worldAnchor, 1);
+	}
+
 	public void RotateCounterClockwise (Vector3 worldAnchor) {
 		if (_currStateInfo.state != RotationState.Idle) { return; }
+		if (!CanYRotateAroundAnchor(worldAnchor)) { return; }
 		_currStateInfo.state = RotationState.StartRotatingCounterClockwise;
 		_currStateInfo.rotationAnchor = worldAnchor;
 	}
 
 	public void RotateClockwise (Vector3 worldAnchor) {
 		if (_currStateInfo.state != RotationState.Idle) { return; }
+		if (!CanYRotateAroundAnchor(worldAnchor)) { return; }
 		_currStateInfo.state = RotationState.StartRotatingClockwise;
 		_currStateInfo.rotationAnchor = worldAnchor;
 	}
@@ -159,5 +183,17 @@ public class Rotatable : MonoBehaviour {
 
 		// WorldManager.g.UpdatePassability();
 		return true;
+	}
+
+	void OnDrawGizmos () {
+		for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
+			var v = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i] + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			v *= WorldManager.g.TileSize;
+			var w = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i] + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			w *= WorldManager.g.TileSize;
+			v.y += 100f;
+			w.y -= 100f;
+			Gizmos.DrawLine(v,w);
+		}
 	}
 }
