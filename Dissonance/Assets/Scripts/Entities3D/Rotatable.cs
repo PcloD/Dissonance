@@ -36,7 +36,7 @@ public class Rotatable : MonoBehaviour {
 	}
 
 	[SerializeField]
-	List<Vector3> _explicitRelativeRotationAnchors;
+	List<IntVector> _explicitRelativeRotationAnchors;
 
 	public delegate void RotationBeganDelegates();
     public RotationBeganDelegates RotationHook;
@@ -83,7 +83,7 @@ public class Rotatable : MonoBehaviour {
 			Vector3 offset = (worldAnchor - _worldEntity.Location.ToVector3() * WorldManager.g.TileSize);
 			offset[axis] = 0f;
 			for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
-				var currVec = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i]);
+				var currVec = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize));
 				currVec[axis] = 0f;
 				if ((currVec-offset).magnitude < 0.01f) {
 					return true;
@@ -187,9 +187,9 @@ public class Rotatable : MonoBehaviour {
 
 	void OnDrawGizmos () {
 		for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
-			var v = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i] + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			var v = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
 			v *= WorldManager.g.TileSize;
-			var w = (_worldEntity.Rotation * _explicitRelativeRotationAnchors[i] + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
+			var w = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
 			w *= WorldManager.g.TileSize;
 			v.y += 100f;
 			w.y -= 100f;
