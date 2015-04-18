@@ -2,18 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum FacingDir {
-	Left,
-	Right
-}
-
-public enum State {
-	Idle,
-	Walking,
-	Jumping,
-	Falling
-}
-
 public class Char2D : MonoBehaviour {
 
 	private WorldEntity2D _worldEntity;
@@ -77,7 +65,7 @@ public class Char2D : MonoBehaviour {
 	}
 
 	void OnDisable () {
-		_worldEntity.Simulators += Simulate;
+		_worldEntity.Simulators -= Simulate;
 	}
 
 	void Awake () {

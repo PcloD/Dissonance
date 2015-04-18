@@ -54,7 +54,7 @@ public class WorldEntity2D : MonoBehaviour
 			float tileSize = WorldManager.g.TileSize;
 			List<IntVector2D> all = AbsoluteLocations (_loc);
 			int x, y, z;
-			if (GetComponent<Door2D> ()) {
+			if (GetComponent<Trigger2D> ()) {
 				Gizmos.color = Color.cyan;
 			} else {
 				Gizmos.color = Color.green;

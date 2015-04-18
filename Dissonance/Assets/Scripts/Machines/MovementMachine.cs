@@ -71,7 +71,7 @@ public class MovementMachine : MonoBehaviour, IControllableMachine {
 	}
 
 	void OnDisable () {
-		_worldEntity.Simulators += Simulate;
+		_worldEntity.Simulators -= Simulate;
 		if (_rotationController != null) {
 			_rotationController.RotationHook -= InitMoving;
 		}

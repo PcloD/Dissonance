@@ -97,7 +97,7 @@ public class XYZChar : MonoBehaviour {
 	}
 
 	void OnDisable () {
-		_worldEntity.Simulators += Simulate;
+		_worldEntity.Simulators -= Simulate;
 	}
 
 	IntVector ComputedLocation {

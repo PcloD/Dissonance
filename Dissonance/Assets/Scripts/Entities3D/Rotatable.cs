@@ -62,7 +62,7 @@ public class Rotatable : MonoBehaviour {
 	}
 
 	void OnDisable () {
-		_worldEntity.Simulators += Simulate;
+		_worldEntity.Simulators -= Simulate;
 	}
 
 	void Start () {
