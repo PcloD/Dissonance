@@ -116,16 +116,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors:
+  - x: 0
+    y: 0
+    z: 0
 --- !u!114 &9400892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,6 +711,18 @@ MonoBehaviour:
   - x: 1
     y: 0
     z: 1
+  - x: 1
+    y: -1
+    z: 1
+  - x: 0
+    y: -1
+    z: 1
+  - x: 1
+    y: -1
+    z: 0
+  - x: 0
+    y: -1
+    z: 0
 --- !u!4 &994709174
 Transform:
   m_ObjectHideFlags: 0
@@ -1402,16 +1408,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors:
+  - x: 0
+    y: 0
+    z: 0
 --- !u!114 &1735293248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1629,13 +1629,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors: []

@@ -116,16 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors: []
 --- !u!114 &9400892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,7 +495,7 @@ GameObject:
   - 114: {fileID: 740871298}
   - 114: {fileID: 740871297}
   m_Layer: 0
-  m_Name: block 1-x exit
+  m_Name: block 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1131,6 +1122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotationController: {fileID: 9400891}
+  _rotationController2: {fileID: 2095144574}
   _currStateInfo:
     lastLocation:
       x: 0
@@ -1143,9 +1135,15 @@ MonoBehaviour:
     axisX: 1
     axisY: 0
     axisZ: 0
+    axisX2: 0
+    axisY2: 0
+    axisZ2: 1
   singleMovementDistX: 2
   singleMovementDistY: 1
   singleMovementDistZ: 1
+  singleMovementDistX2: 1
+  singleMovementDistY2: 0
+  singleMovementDistZ2: 1
 --- !u!1 &1609537641
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,16 +1311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currStateInfo:
-    lastState: 0
-    state: 0
-    fractionComplete: 0
-    rotationAnchor: {x: 0, y: 0, z: 0}
-    lastRotation: {x: 0, y: 0, z: 0, w: 0}
-    lastLocation:
-      x: 0
-      y: 0
-      z: 0
+  _explicitRelativeRotationAnchors: []
 --- !u!114 &1735293248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1446,8 +1435,9 @@ GameObject:
   - 114: {fileID: 2095144571}
   - 114: {fileID: 2095144570}
   - 114: {fileID: 2095144573}
+  - 114: {fileID: 2095144574}
   m_Layer: 0
-  m_Name: block 3-movable-z exit
+  m_Name: block 3-movable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1478,7 +1468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loc:
     x: 6
-    y: 6
+    y: 5
     z: 10
   _identityLocations:
   - x: 0
@@ -1517,6 +1507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotationController: {fileID: 1735293247}
+  _rotationController2: {fileID: 0}
   _currStateInfo:
     lastLocation:
       x: 0
@@ -1529,6 +1520,24 @@ MonoBehaviour:
     axisX: 0
     axisY: 0
     axisZ: 1
+    axisX2: 0
+    axisY2: 0
+    axisZ2: 0
   singleMovementDistX: 1
   singleMovementDistY: 1
-  singleMovementDistZ: -1
+  singleMovementDistZ: -2
+  singleMovementDistX2: 1
+  singleMovementDistY2: 1
+  singleMovementDistZ2: 1
+--- !u!114 &2095144574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2095144569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811ec0b17b3714c43be7bbb4f82e3449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _explicitRelativeRotationAnchors: []
