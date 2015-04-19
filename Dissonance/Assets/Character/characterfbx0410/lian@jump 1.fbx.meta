@@ -54,7 +54,7 @@ ModelImporter:
     4300008: rightLeg
     4300010: leftLeg
     4300012: cloth
-    7400000: jump 1
+    7400000: jump
     9500000: //RootNode
     13700000: body 1
     13700002: eyeLid
@@ -78,7 +78,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: jump 1
+      name: jump
       takeName: Take 001
       firstFrame: 1
       lastFrame: 9

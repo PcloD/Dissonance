@@ -1467,15 +1467,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 440074, guid: 070ca190648fd480eb2732bb6be4a5c1, type: 2}
       propertyPath: m_LocalScale.x
-      value: 100
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 440074, guid: 070ca190648fd480eb2732bb6be4a5c1, type: 2}
       propertyPath: m_LocalScale.y
-      value: 100
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 440074, guid: 070ca190648fd480eb2732bb6be4a5c1, type: 2}
       propertyPath: m_LocalScale.z
-      value: 100
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 417904, guid: 070ca190648fd480eb2732bb6be4a5c1, type: 2}
       propertyPath: m_LocalScale.x
