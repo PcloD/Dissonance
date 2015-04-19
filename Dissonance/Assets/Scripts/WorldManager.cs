@@ -62,12 +62,6 @@ public class WorldManager : MonoBehaviour {
         UpdatePlanes();
     }
 
-    [SerializeField]
-    Transform _shadowContainer;
-    public Transform ShadowContainer {
-        get { return _shadowContainer; }
-    }
-
     public void EnsureGExists () {
         if (WorldManager.g == null) {
             WorldManager.g = this;
