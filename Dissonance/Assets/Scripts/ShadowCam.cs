@@ -8,6 +8,6 @@ public class ShadowCam : MonoBehaviour {
 	Camera _camera;
 	void Awake () {
 		_camera = GetComponent<Camera>();
-		_camera.SetReplacementShader(_shadowShader, null);
+		_camera.SetReplacementShader(_shadowShader, "RenderType");
 	}
 }

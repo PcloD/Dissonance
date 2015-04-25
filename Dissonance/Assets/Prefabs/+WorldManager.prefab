@@ -1,20 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &118948
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 418948}
-  m_Layer: 0
-  m_Name: Shadows
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &149070
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +10,7 @@ GameObject:
   - 4: {fileID: 449070}
   - 114: {fileID: 11449070}
   - 114: {fileID: 11476150}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: +WorldManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +28,7 @@ GameObject:
   - 33: {fileID: 3376146}
   - 23: {fileID: 2376146}
   - 114: {fileID: 11476146}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlaneZY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,25 +46,13 @@ GameObject:
   - 33: {fileID: 3376148}
   - 23: {fileID: 2376148}
   - 114: {fileID: 11476148}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlaneXY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &418948
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 118948}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 449070}
-  m_RootOrder: 2
 --- !u!4 &449070
 Transform:
   m_ObjectHideFlags: 1
@@ -92,7 +65,6 @@ Transform:
   m_Children:
   - {fileID: 476148}
   - {fileID: 476146}
-  - {fileID: 418948}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &476146
@@ -129,7 +101,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b81481cd97d8247a4b6f4e9d7d3f109d, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -153,7 +125,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: da52761b77b0544de8901ec5139d398a, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -194,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _xDim: 40
   _zDim: 40
-  _yDim: 40
+  _yDim: 32
   _tileSize: 1
   _planeXY: {fileID: 11476148}
   _planeZY: {fileID: 11476146}

@@ -48,7 +48,7 @@ public class XYZChar : MonoBehaviour {
 			foreach (var pt in locs) {
 				lowestY = (int)Mathf.Min (pt.y, lowestY);
 			}
-			
+
 			var bottomParts = new IntVector2D[2];
 			int index = 0;
 			foreach (var pt in locs) {

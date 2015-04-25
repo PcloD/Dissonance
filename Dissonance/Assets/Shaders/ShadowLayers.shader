@@ -54,23 +54,9 @@ SubShader {
                 fixed4 bgCol = tex2D(_BackgroundTexture, i.texcoord);
                 fixed4 texCol = tex2D(_ShadowTexture, i.texcoord);
 
-                // if (i.texcoord.x > 0.3) {
-                // 	return shadowProjCol + bgCol;
-                // }
-
-				
-				return lerp(float4(1), float4(0), shadowProjCol.a);//(1-shadowProjCol.a * 50) * texCol + bgCol * (shadowProjCol.a * 50) + fixed4(0,0,0,1);
-                //if (shadowProjCol.a < 0.01) {
-                // 	return texCol;
-                //	return fixed4(texCol.r,texCol.g,texCol.b,shadowProjCol.a) + texCol; // green
-                //}
-                // return (texCol*(1-shadowProjCol.a))+bgCol*shadowProjCol.a;
-                //return bgCol;//fixed4(1,0,0,1-shadowProjCol.a); //red
-
-                // return fixed4(shadowProjCol.r + texCol.r * bgCol.r,
-                // 	          shadowProjCol.g + texCol.g * bgCol.g,
-                // 	          shadowProjCol.b + texCol.b * bgCol.b,
-                // 	          bgCol.a);
+                //return (1-shadowProjCol.a * 50) * texCol + bgCol * (shadowProjCol.a * 50) + fixed4(0,0,0,1);
+                return lerp(float4(1), float4(0), shadowProjCol.a) * bgCol;
+				//return lerp(float4(1), float4(0), shadowProjCol.a);
             }
         ENDCG
     }

@@ -23,34 +23,6 @@ Material:
           m_Offset: {x: -.43900001, y: .250999987}
       data:
         first:
-          name: _ToonShade
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ShadowProjection
-        second:
-          m_Texture: {fileID: 8400000, guid: 384b39b9d90ed4d6199f83507e42e8bf, type: 2}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BackgroundTexture
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ShadowTexture
-        second:
-          m_Texture: {fileID: 2800000, guid: d2676fbab605d44b4b942fa4f0c42aee, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _Texture2
         second:
           m_Texture: {fileID: 2800000, guid: 918b51b3585ad451aa6642a57458ad5b, type: 3}
@@ -68,6 +40,34 @@ Material:
           name: _AlphaTex
         second:
           m_Texture: {fileID: 2800000, guid: 918b51b3585ad451aa6642a57458ad5b, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShadowProjection
+        second:
+          m_Texture: {fileID: 8400000, guid: 384b39b9d90ed4d6199f83507e42e8bf, type: 2}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BackgroundTexture
+        second:
+          m_Texture: {fileID: 2800000, guid: ccfd53e58b50c4685a39fba98aeb91e1, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShadowTexture
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ToonShade
+        second:
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:

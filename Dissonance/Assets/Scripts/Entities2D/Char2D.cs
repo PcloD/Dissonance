@@ -176,16 +176,16 @@ public class Char2D : MonoBehaviour {
 		Vector2 visualOffset = (Location.ToVector2() - _currStateInfo.lastLoc.ToVector2()) * (_currStateInfo.fractionComplete);
 
 		// TODO(Julian): Add Animation here!
-		float epsilon = 0.0001f;
+		float separationFromWall = 10f;
 		switch (Orientation) {
 			case PlaneOrientation.XY:
 				v = _currStateInfo.lastLoc.ToVector2() + visualOffset;
-				v.z = epsilon;
+				v.z = separationFromWall;
 				break;
 			case PlaneOrientation.ZY:
 				v.z = _currStateInfo.lastLoc.x + visualOffset.x;
 				v.y = _currStateInfo.lastLoc.y + visualOffset.y;
-				v.x = epsilon;
+				v.x = separationFromWall;
 				break;
 			default:
 				break;
