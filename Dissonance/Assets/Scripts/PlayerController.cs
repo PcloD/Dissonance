@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour {
 
 		Rotatable r = _avatar3d.ObjectToRotate;
 		if (r != null) {
+			r.AnimateAtAnchor(_avatar3d.Anchor);
 			if (Input.GetKey(KeyCode.Z)) { r.RotateCounterClockwise(_avatar3d.Anchor); }
 			else if (Input.GetKey(KeyCode.X)) { r.RotateClockwise(_avatar3d.Anchor); }
 		}

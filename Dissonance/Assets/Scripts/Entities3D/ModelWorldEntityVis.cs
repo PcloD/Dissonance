@@ -3,8 +3,9 @@ using System.Collections;
 
 public class ModelWorldEntityVis : MonoBehaviour {
 
+	public GameObject _visualChild;
 	[SerializeField]
-	GameObject _visualChild;
+
 	private WorldEntity _worldEntity;
 	private Rotatable _rotatable;
 	private MovementMachine _movementMachine;

@@ -16,7 +16,58 @@ public class XYZChar : MonoBehaviour {
 	private Vector3 _localAnchor;
 	private WorldEntity _worldEntity;
 
+	public static XYZChar g;
+
+	public IntVector2D[] XYPositions {
+		get {
+			// XXX (JULIAN): This is really inefficient, but we can optimize it later
+			var locs = _xyComponent.AbsoluteLocations(_xyComponent.Location);
+
+			int lowestY = (int)Mathf.Pow(2, sizeof(int));
+			foreach (var pt in locs) {
+				lowestY = (int)Mathf.Min (pt.y, lowestY);
+			}
+
+			var bottomParts = new IntVector2D[2];
+			int index = 0;
+			foreach (var pt in locs) {
+				if (pt.y == lowestY) {
+					bottomParts[index] = pt;
+					index++;
+				}
+			}
+			return bottomParts;
+		}
+	}
+	public IntVector2D[] ZYPositions {
+		get {
+			// XXX (JULIAN): This is really inefficient, but we can optimize it later
+			var locs = _zyComponent.AbsoluteLocations(_zyComponent.Location);
+
+			int lowestY = (int)Mathf.Pow(2, sizeof(int));
+			foreach (var pt in locs) {
+				lowestY = (int)Mathf.Min (pt.y, lowestY);
+			}
+			
+			var bottomParts = new IntVector2D[2];
+			int index = 0;
+			foreach (var pt in locs) {
+				if (pt.y == lowestY) {
+					bottomParts[index] = pt;
+					index++;
+				}
+			}
+			return bottomParts;
+		}
+	}
+
 	void Awake () {
+		if (g == null) {
+			g = this;
+		} else {
+			Destroy(gameObject);
+		}
+
 		_worldEntity = GetComponent<WorldEntity>();
 		_visualsTransform = _visuals.transform;
 	}

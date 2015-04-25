@@ -83,6 +83,12 @@ public class WorldEntity : MonoBehaviour
         }
     }
 
+	public List<IntVector> all{
+		get {
+			return AbsoluteLocations(_loc, Quaternion.identity);
+		}
+	}
+
     void OnDrawGizmos()
     {
         // NOTE(Julian): For debug visualization in Unity editor
@@ -103,7 +109,7 @@ public class WorldEntity : MonoBehaviour
             }
 
             float tileSize = WorldManager.g.TileSize;
-            List<IntVector> all = AbsoluteLocations(_loc, Quaternion.identity);
+        	//all = AbsoluteLocations(_loc, Quaternion.identity);
             int x, y, z;
             for (int i = 0; i < all.Count; i++)
             {

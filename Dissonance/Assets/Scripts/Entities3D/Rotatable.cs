@@ -30,13 +30,16 @@ public class Rotatable : MonoBehaviour {
 
 	private WorldEntity _worldEntity;
 
-	RotationStateInformation _currStateInfo;
+	public RotationStateInformation _currStateInfo;
 	public RotationStateInformation StateInfo {
 		get { return _currStateInfo; }
 	}
+	
 
 	[SerializeField]
 	List<IntVector> _explicitRelativeRotationAnchors;
+	[SerializeField]
+	List<RotationAnchorAnimator> _explicitRelativeRotationAnchorAnimationSystems;
 
 	public delegate void RotationBeganDelegates();
     public RotationBeganDelegates RotationHook;
@@ -76,6 +79,27 @@ public class Rotatable : MonoBehaviour {
 		_currStateInfo.rotationAnchor = _worldEntity.Location.ToVector3();
 		_currStateInfo.lastRotation = _worldEntity.Rotation;
 		_currStateInfo.lastLocation = _worldEntity.Location;
+	}
+
+	public void AnimateAtAnchor (Vector3 worldAnchor) {
+		int axis = 1;
+		if (_explicitRelativeRotationAnchors.Count > 0) {
+			Vector3 offset = (worldAnchor - _worldEntity.Location.ToVector3() * WorldManager.g.TileSize);
+			offset[axis] = 0f;
+			for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
+				var currVec = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize));
+				currVec[axis] = 0f;
+				if ((currVec-offset).magnitude < 0.01f) {
+					if(_currStateInfo.state == RotationState.RotatingClockwise || _currStateInfo.state == RotationState.RotatingCounterClockwise)
+						_explicitRelativeRotationAnchorAnimationSystems[i].rotatingAnimation();
+					else
+						_explicitRelativeRotationAnchorAnimationSystems[i].underCharAnimation();//animation for rotation
+					return;
+				}else{
+					_explicitRelativeRotationAnchorAnimationSystems[i].noAnimation();
+				}
+			}
+		}
 	}
 
 	private bool CanRotateAroundAnchor (Vector3 worldAnchor, int axis) {
