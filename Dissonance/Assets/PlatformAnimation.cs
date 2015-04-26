@@ -7,12 +7,14 @@ public class PlatformAnimation : MonoBehaviour {
     List<GameObject> beneathVisualObjs = new List<GameObject>();
     List<Vector4> beneathVisualPlace = new List<Vector4>();
     float speed = 6;
+    [SerializeField]
+    GameObject _beneathVisualPrefab;
 
     void Start () {
-        if (GameObject.Find("beneathVisual").gameObject && GetComponent<ModelWorldEntityVis>()) {
+        if (GetComponent<ModelWorldEntityVis>()) {
             var worldEntity = GetComponent<WorldEntity>();
             foreach (IntVector unit in worldEntity.AbsoluteLocations(worldEntity.Location, worldEntity.Rotation)) {
-                GameObject obj = Instantiate(GameObject.Find("beneathVisual").gameObject) as GameObject;
+                GameObject obj = Instantiate(_beneathVisualPrefab) as GameObject;
                 obj.transform.position = (unit.ToVector3() + Vector3.one / 2) * WorldManager.g.TileSize;
                 obj.transform.parent = GetComponent<ModelWorldEntityVis>()._visualChild.transform;
                 beneathVisualObjs.Add(obj.gameObject);
@@ -46,13 +48,15 @@ public class PlatformAnimation : MonoBehaviour {
         for (int i = 0; i < beneathVisualObjs.Count; i++) {
             Vector4 p = beneathVisualPlace[i];
             p.w = 0;
-            for (int j = 0; j < XYZChar.g.XYPositions.Length; j++) {
-                if (p.x == (float)XYZChar.g.XYPositions[j].x &&
-                    p.y == (float)XYZChar.g.XYPositions[j].y - 1f) {
+            var xyPositions = XYZChar.g.XYPositions;
+            var zyPositions = XYZChar.g.ZYPositions;
+            for (int j = 0; j < xyPositions.Length; j++) {
+                if (p.x == (float)xyPositions[j].x &&
+                    p.y == (float)xyPositions[j].y - 1f) {
                     p.w = p.w + 1;
                 }
-                if (p.z == (float)XYZChar.g.ZYPositions[j].x &&
-                    p.y == (float)XYZChar.g.ZYPositions[j].y - 1f) {
+                if (p.z == (float)zyPositions[j].x &&
+                    p.y == (float)zyPositions[j].y - 1f) {
                     p.w = p.w + 1;
                 }
             }
