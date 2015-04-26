@@ -23,11 +23,11 @@ public class PlatformAnimation : MonoBehaviour {
 
     void FixedUpdate () {
         if (GetComponent<Rotatable>()) {
-            if (GetComponent<Rotatable>()._currStateInfo.state == RotationState.Idle) {
+            if (GetComponent<Rotatable>().StateInfo.state == RotationState.Idle) {
                 pfPositionIndicator();
             }
-            if (GetComponent<Rotatable>()._currStateInfo.state == RotationState.RotatingClockwise ||
-                GetComponent<Rotatable>()._currStateInfo.state == RotationState.RotatingCounterClockwise) {
+            if (GetComponent<Rotatable>().StateInfo.state == RotationState.RotatingClockwise ||
+                GetComponent<Rotatable>().StateInfo.state == RotationState.RotatingCounterClockwise) {
                 for (int i = 0; i < beneathVisualObjs.Count; i++) {
                     Vector3 nextScale = new Vector3(0, 0, 0);
                     beneathVisualObjs[i].transform.localScale = Vector3.Lerp(beneathVisualObjs[i].transform.localScale, nextScale, Time.deltaTime * speed);

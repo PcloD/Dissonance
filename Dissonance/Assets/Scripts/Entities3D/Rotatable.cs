@@ -35,7 +35,7 @@ public class Rotatable : MonoBehaviour {
 
     private WorldEntity _worldEntity;
 
-    public RotationStateInformation _currStateInfo;
+    private RotationStateInformation _currStateInfo;
     public RotationStateInformation StateInfo {
         get { return _currStateInfo; }
     }
