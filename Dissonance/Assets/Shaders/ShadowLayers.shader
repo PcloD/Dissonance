@@ -5,7 +5,7 @@
 
 Shader "Unlit/ShadowLayers" {
 Properties {
-    _ShadowProjection ("Base (RGB)", 2D) = "white" {}
+    _MainTex ("Base (RGB)", 2D) = "white" {}
     _BackgroundTexture ("Background Texture", 2D) = "white" {}
     _ShadowTexture ("Shadow Texture", 2D) = "black" {}
 }
@@ -34,23 +34,23 @@ SubShader {
                 half2 texcoord : TEXCOORD0;
             };
 
-            sampler2D _ShadowProjection;
+            sampler2D _MainTex;
             sampler2D _BackgroundTexture;
             sampler2D _ShadowTexture;
 
-            float4 _ShadowProjection_ST;
+            float4 _MainTex_ST;
 
             v2f vert (appdata_t v)
             {
                 v2f o;
                 o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-                o.texcoord = TRANSFORM_TEX(v.texcoord, _ShadowProjection);
+                o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 shadowProjCol = tex2D(_ShadowProjection, i.texcoord);
+                fixed4 shadowProjCol = tex2D(_MainTex, i.texcoord);
                 fixed4 bgCol = tex2D(_BackgroundTexture, i.texcoord);
                 fixed4 texCol = tex2D(_ShadowTexture, i.texcoord);
 

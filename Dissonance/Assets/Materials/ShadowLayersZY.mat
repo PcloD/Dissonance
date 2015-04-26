@@ -19,8 +19,15 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 8400000, guid: b600480ae3ba24679b01ccd29e9b377f, type: 2}
-          m_Scale: {x: 1.25, y: 1}
-          m_Offset: {x: .197999999, y: .250999987}
+          m_Scale: {x: 1, y: .800000012}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ToonShade
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Texture2
@@ -62,13 +69,6 @@ Material:
         second:
           m_Texture: {fileID: 2800000, guid: ccfd53e58b50c4685a39fba98aeb91e1, type: 3}
           m_Scale: {x: 1, y: .800000012}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ToonShade
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:

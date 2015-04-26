@@ -19,6 +19,14 @@ public class WorldManager : MonoBehaviour {
     // Up
     [SerializeField]
     float _tileSize = 0.5f;
+    [SerializeField]
+    Camera _xyCam;
+    [SerializeField]
+    Camera _zyCam;
+    [SerializeField]
+    Renderer _xyShadowRenderer;
+    [SerializeField]
+    Renderer _zyShadowRenderer;
 
     public float TileSize {
         get { return _tileSize; }
@@ -136,6 +144,16 @@ public class WorldManager : MonoBehaviour {
         _planeZY.Init(_xDim, _yDim, _zDim);
         _planes[0] = _planeXY;
         _planes[1] = _planeZY;
+
+        Vector3 xyCamPos = new Vector3(_xDim/2f, _xDim/2f, 100f);
+        Vector3 zyCamPos = new Vector3(100f, _zDim/2f, _zDim/2f);
+        _xyCam.orthographicSize = _xDim/2f;
+        _zyCam.orthographicSize = _zDim/2f;
+        _xyCam.transform.position = xyCamPos;
+        _zyCam.transform.position = zyCamPos;
+
+        _xyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_xDim));
+        _zyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_zDim));
     }
 
     // NOTE(Julian): This is the frame bottleneck; optimization potential
