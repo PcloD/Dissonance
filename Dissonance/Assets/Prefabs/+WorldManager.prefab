@@ -164,9 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60baf509a8eec420e9a96844bcd2f1ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _xDim: 40
-  _zDim: 40
-  _yDim: 32
+  _xDim: 30
+  _zDim: 30
+  _yDim: 24
   _tileSize: 1
   _planeXY: {fileID: 11476148}
   _planeZY: {fileID: 11476146}
