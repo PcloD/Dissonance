@@ -10,7 +10,8 @@ public class PlatformAnimation : MonoBehaviour {
 
     void Start () {
         if (GameObject.Find("beneathVisual").gameObject && GetComponent<ModelWorldEntityVis>()) {
-            foreach (IntVector unit in GetComponent<WorldEntity>().all) {
+            var worldEntity = GetComponent<WorldEntity>();
+            foreach (IntVector unit in worldEntity.AbsoluteLocations(worldEntity.Location, worldEntity.Rotation)) {
                 GameObject obj = Instantiate(GameObject.Find("beneathVisual").gameObject) as GameObject;
                 obj.transform.position = (unit.ToVector3() + Vector3.one / 2) * WorldManager.g.TileSize;
                 obj.transform.parent = GetComponent<ModelWorldEntityVis>()._visualChild.transform;
