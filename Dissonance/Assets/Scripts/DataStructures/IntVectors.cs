@@ -128,6 +128,14 @@ public struct IntVector2D : System.IEquatable<IntVector2D> {
 	  return !(x == y);
 	}
 
+	public static IntVector2D operator *(IntVector2D a, int b) {
+	  return new IntVector2D (a.x*b, a.y*b);
+	}
+
+	public static IntVector2D operator *(int a, IntVector2D b) {
+	  return new IntVector2D (a*b.x, a*b.y);
+	}
+
 	public static IntVector2D operator +(IntVector2D a, IntVector2D b) {
 	  return new IntVector2D (a.x+b.x, a.y+b.y);
 	}
