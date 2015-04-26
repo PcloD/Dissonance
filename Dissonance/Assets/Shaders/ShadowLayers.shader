@@ -54,8 +54,11 @@ SubShader {
                 fixed4 bgCol = tex2D(_BackgroundTexture, i.texcoord);
                 fixed4 texCol = tex2D(_ShadowTexture, i.texcoord);
 
+                fixed4 res = lerp(float4(1), float4(0), shadowProjCol.a) * bgCol;
+
                 //return (1-shadowProjCol.a * 50) * texCol + bgCol * (shadowProjCol.a * 50) + fixed4(0,0,0,1);
-                return lerp(float4(1), float4(0), shadowProjCol.a) * bgCol;
+                return res.aaaa * res + (float4(1.0, 1.0, 1.0, 1.0) - res.aaaa) * fixed4(texCol.r,texCol.g,texCol.b,bgCol.a);
+
 				//return lerp(float4(1), float4(0), shadowProjCol.a);
             }
         ENDCG
