@@ -146,30 +146,50 @@ public class WorldManager : MonoBehaviour {
         if (_zyWorldShadows == null)
             _zyWorldShadows = new bool[_zDim, _yDim];
 
-        // Fill _zyWorldShadows map
-        for (int y = 0; y < _yDim; y++) {
-            for (int z = 0; z < _zDim; z++) {
-                _zyWorldShadows[z, y] = true;
-                for (int x = 0; x < _xDim; x++) {
-                    if (CastsShadowsAt3D(x, y, z)) {
-                        _zyWorldShadows[z, y] = false;
-                        break;
-                    }
-                }
-            }
-        }
-        // Fill _xyWorldShadows map
         for (int y = 0; y < _yDim; y++) {
             for (int x = 0; x < _xDim; x++) {
-                _xyWorldShadows[x, y] = true;
-                for (int z = 0; z < _zDim; z++) {
-                    if (CastsShadowsAt3D(x, y, z)) {
-                        _xyWorldShadows[x, y] = false;
-                        break;
-                    }
-                }
+                _xyWorldShadows[x,y] = true;
+            }
+            for (int z = 0; z < _zDim; z++) {
+                _zyWorldShadows[z,y] = true;
             }
         }
+
+        for (int i = 0; i < _worldEntities.Count; i++) {
+            if (!_worldEntities[i].CastsShadows) {
+                continue;
+            }
+            var locations = _worldEntities[i].AbsoluteLocations(_worldEntities[i].Location, _worldEntities[i].Rotation);
+            for (int j = 0; j < locations.Count; j++) {
+                _xyWorldShadows[locations[j].x, locations[j].y] = false;
+                _zyWorldShadows[locations[j].z, locations[j].y] = false;
+            }
+        }
+
+        // // Fill _zyWorldShadows map
+        // for (int y = 0; y < _yDim; y++) {
+        //     for (int z = 0; z < _zDim; z++) {
+        //         _zyWorldShadows[z, y] = true;
+        //         for (int x = 0; x < _xDim; x++) {
+        //             if (CastsShadowsAt3D(x, y, z)) {
+        //                 _zyWorldShadows[z, y] = false;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
+        // // Fill _xyWorldShadows map
+        // for (int y = 0; y < _yDim; y++) {
+        //     for (int x = 0; x < _xDim; x++) {
+        //         _xyWorldShadows[x, y] = true;
+        //         for (int z = 0; z < _zDim; z++) {
+        //             if (CastsShadowsAt3D(x, y, z)) {
+        //                 _xyWorldShadows[x, y] = false;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     private bool CanExistOn (List<IntVector2D> relativeLocations, IntVector2D on, PlaneOrientation orientation) {

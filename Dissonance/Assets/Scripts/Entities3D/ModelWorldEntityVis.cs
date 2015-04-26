@@ -3,8 +3,8 @@ using System.Collections;
 
 public class ModelWorldEntityVis : MonoBehaviour {
 
-	public GameObject _visualChild;
 	[SerializeField]
+	public GameObject _visualChild; // XXX(Julian): (THIS SHOULD NOT BE PUBLIC)
 
 	private WorldEntity _worldEntity;
 	private Rotatable _rotatable;
