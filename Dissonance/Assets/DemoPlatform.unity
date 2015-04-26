@@ -3696,6 +3696,7 @@ MonoBehaviour:
     movementSpeed: 4
     fallSpeed: 2
   _visuals: {fileID: 1387597834}
+  _animator: {fileID: 1718853812}
 --- !u!4 &1132735944
 Transform:
   m_ObjectHideFlags: 0
@@ -4115,6 +4116,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _xyComponent: {fileID: 1723583812}
   _zyComponent: {fileID: 1132735943}
+  _xyVisuals: {fileID: 822110376}
+  _zyVisuals: {fileID: 1387597833}
   _visuals: {fileID: 778830576}
 --- !u!4 &1237710581
 Transform:
@@ -5360,7 +5363,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 1615473254}
   - 114: {fileID: 1615473255}
-  - 114: {fileID: 1615473256}
   m_Layer: 0
   m_Name: Characters_P
   m_TagString: Untagged
@@ -5398,21 +5400,6 @@ MonoBehaviour:
   _avatarXY: {fileID: 1723583812}
   _avatarZY: {fileID: 1132735943}
   _avatar3d: {fileID: 1237710580}
---- !u!114 &1615473256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1615473253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a86a47b70e7c64f3899459bdfb693e79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animators:
-  - {fileID: 291797021}
-  - {fileID: 1718853812}
-  - {fileID: 1050710906}
 --- !u!1 &1639978728
 GameObject:
   m_ObjectHideFlags: 0
@@ -5685,6 +5672,7 @@ MonoBehaviour:
     movementSpeed: 4
     fallSpeed: 2
   _visuals: {fileID: 822110377}
+  _animator: {fileID: 291797021}
 --- !u!114 &1723583813
 MonoBehaviour:
   m_ObjectHideFlags: 0

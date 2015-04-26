@@ -1,8 +1,29 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Char2D : MonoBehaviour {
+
+	public enum State {
+		Idle,
+		Walking,
+		Jumping,
+		Falling
+	}
+
+	[System.Serializable]
+	public struct StateInformation {
+		[HideInInspector]
+		public State lastState;
+		public State state;
+
+		[HideInInspector]
+		public float fractionComplete; // Range from 0-1, inclusive
+		public FacingDir facingDirection;
+		[HideInInspector]
+		public IntVector2D lastLoc;
+	}
 
 	private WorldEntity2D _worldEntity;
 
@@ -19,6 +40,9 @@ public class Char2D : MonoBehaviour {
 		get { return _currStateInfo; }
 	}
 
+	private int[] _animationStateIds;
+	private State[] _allStates;
+
 	// Vector2 _desiredInput;
 	// public Vector2 DesiredInput {
 	// 	get { return _desiredInput; }
@@ -33,6 +57,9 @@ public class Char2D : MonoBehaviour {
 
 	[SerializeField]
 	Transform _visuals;
+	[SerializeField]
+	Animator _animator;
+	Transform _animatorRotator;
 
 	public PlaneOrientation Orientation {
 		get { return _worldEntity.Orientation; }
@@ -69,6 +96,12 @@ public class Char2D : MonoBehaviour {
 	}
 
 	void Awake () {
+		_allStates = (State[])Enum.GetValues(typeof(State));
+		_animationStateIds = new int[_allStates.Length];
+		for (int i = 0; i < _allStates.Length; i++) {
+			_animationStateIds[i] = Animator.StringToHash(_allStates[i].ToString());
+		}
+		_animatorRotator = _animator.transform;
 		_worldEntity = GetComponent<WorldEntity2D>();
 	}
 
@@ -181,11 +214,21 @@ public class Char2D : MonoBehaviour {
 			case PlaneOrientation.XY:
 				v = _currStateInfo.lastLoc.ToVector2() + visualOffset;
 				v.z = separationFromWall;
+				if (_currStateInfo.facingDirection == FacingDir.Left) {
+					_animatorRotator.rotation = Quaternion.AngleAxis(-90f, Vector3.up);
+				} else {
+					_animatorRotator.rotation = Quaternion.AngleAxis(90f, Vector3.up);
+				}
 				break;
 			case PlaneOrientation.ZY:
 				v.z = _currStateInfo.lastLoc.x + visualOffset.x;
 				v.y = _currStateInfo.lastLoc.y + visualOffset.y;
 				v.x = separationFromWall;
+				if (_currStateInfo.facingDirection == FacingDir.Left) {
+					_animatorRotator.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+				} else {
+					_animatorRotator.rotation = Quaternion.AngleAxis(0f, Vector3.up);
+				}
 				break;
 			default:
 				break;
@@ -210,6 +253,10 @@ public class Char2D : MonoBehaviour {
 			// }
 			_currStateInfo.lastLoc = Location;
 			_currStateInfo.fractionComplete = 0f;
+		}
+
+		for (int i = 0; i < _allStates.Length; i++) {
+			_animator.SetBool(_animationStateIds[i], (_currStateInfo.state == _allStates[i]));
 		}
 
 		// _currStateInfo.fractionComplete = Mathf.Max(_currStateInfo.fractionComplete, 0f);

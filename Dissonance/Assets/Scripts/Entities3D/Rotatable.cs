@@ -228,6 +228,7 @@ public class Rotatable : MonoBehaviour {
 
     void OnDrawGizmos () {
         Cache();
+        if (!WorldManager.g) {return;}
         for (int i = 0; i < _explicitRelativeRotationAnchors.Count; i++) {
             var o = (_worldEntity.Rotation * (_explicitRelativeRotationAnchors[i].ToVector3() + Vector3.one * 0.5f * WorldManager.g.TileSize) + _worldEntity.Location.ToVector3()) + Vector3.one * 0.5f;
             var v = o;

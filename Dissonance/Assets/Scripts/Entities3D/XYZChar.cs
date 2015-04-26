@@ -9,6 +9,10 @@ public class XYZChar : MonoBehaviour {
 	[SerializeField]
 	Char2D _zyComponent;
 	[SerializeField]
+	GameObject _xyVisuals;
+	[SerializeField]
+	GameObject _zyVisuals;
+	[SerializeField]
 	GameObject _visuals;
 	Transform _visualsTransform;
 
@@ -61,7 +65,6 @@ public class XYZChar : MonoBehaviour {
 		}
 	}
 
-	Renderer[] _renderers;
 	void Awake () {
 		if (g == null) {
 			g = this;
@@ -69,7 +72,6 @@ public class XYZChar : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
-		_renderers = _visuals.GetComponentsInChildren<Renderer>();
 		_worldEntity = GetComponent<WorldEntity>();
 		_visualsTransform = _visuals.transform;
 	}
@@ -82,7 +84,7 @@ public class XYZChar : MonoBehaviour {
 		get {
 			if (!YsMatch) { return false; }
 			WorldEntity[] beneath = Beneath;
-			return (beneath.Length == 1 && beneath[0] != null);
+			return ((beneath.Length == 1 && beneath[0] != null) || beneath.Length > 1);
 		}
 	}
 
@@ -162,18 +164,16 @@ public class XYZChar : MonoBehaviour {
 	void Update () {
 		if (IsVisible) {
 			_worldEntity.RegisterMe();
-			// _visuals.SetActive(true);
-			for (int i = 0 ; i < _renderers.Length; i++) {
-				_renderers[i].enabled = true;
-			}
+			_visuals.SetActive(true);
+			_xyVisuals.SetActive(false);
+			_zyVisuals.SetActive(false);
 			Vector3 v = new Vector3(_xyComponent.VisualPos[0], _xyComponent.VisualPos[1], _zyComponent.VisualPos[0]);
 			_visualsTransform.position = v;
 		} else {
 			_worldEntity.DeregisterMe();
-			for (int i = 0 ; i < _renderers.Length; i++) {
-				_renderers[i].enabled = false;
-			}
-			// _visuals.SetActive(false);
+			_visuals.SetActive(false);
+			_xyVisuals.SetActive(true);
+			_zyVisuals.SetActive(true);
 		}
 	}
 
