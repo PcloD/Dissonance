@@ -61,6 +61,7 @@ public class XYZChar : MonoBehaviour {
 		}
 	}
 
+	Renderer[] _renderers;
 	void Awake () {
 		if (g == null) {
 			g = this;
@@ -68,6 +69,7 @@ public class XYZChar : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
+		_renderers = _visuals.GetComponentsInChildren<Renderer>();
 		_worldEntity = GetComponent<WorldEntity>();
 		_visualsTransform = _visuals.transform;
 	}
@@ -76,7 +78,7 @@ public class XYZChar : MonoBehaviour {
 		get { return _xyComponent.Location[1] == _zyComponent.Location[1]; }
 	}
 
-	bool IsVisible {
+	public bool IsVisible {
 		get {
 			if (!YsMatch) { return false; }
 			WorldEntity[] beneath = Beneath;
@@ -160,12 +162,18 @@ public class XYZChar : MonoBehaviour {
 	void Update () {
 		if (IsVisible) {
 			_worldEntity.RegisterMe();
-			_visuals.SetActive(true);
+			// _visuals.SetActive(true);
+			for (int i = 0 ; i < _renderers.Length; i++) {
+				_renderers[i].enabled = true;
+			}
 			Vector3 v = new Vector3(_xyComponent.VisualPos[0], _xyComponent.VisualPos[1], _zyComponent.VisualPos[0]);
 			_visualsTransform.position = v;
 		} else {
 			_worldEntity.DeregisterMe();
-			_visuals.SetActive(false);
+			for (int i = 0 ; i < _renderers.Length; i++) {
+				_renderers[i].enabled = false;
+			}
+			// _visuals.SetActive(false);
 		}
 	}
 
