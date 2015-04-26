@@ -152,8 +152,12 @@ public class WorldManager : MonoBehaviour {
         _xyCam.transform.position = xyCamPos;
         _zyCam.transform.position = zyCamPos;
 
-        _xyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_xDim));
-        _zyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_zDim));
+        if (_xyShadowRenderer != null && _xyShadowRenderer.sharedMaterial != null) {
+            _xyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_xDim));
+        }
+        if (_zyShadowRenderer != null && _zyShadowRenderer.sharedMaterial != null) {
+            _zyShadowRenderer.sharedMaterial.SetTextureScale("_MainTex", new Vector2(1f, _yDim/(float)_zDim));
+        }
     }
 
     // NOTE(Julian): This is the frame bottleneck; optimization potential
